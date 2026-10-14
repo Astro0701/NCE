@@ -814,6 +814,9 @@
         /** ------------------------------------------------- 
          *  高亮 & 自动滚动
          * ------------------------------------------------- */
+        /** 听写模式下：用户点击句子后，需要立即进入输入状态的句子索引（-1 表示无） */
+        let dictationRevealIdx = -1;
+
         function highlight(idx, options = {}) {
             const { force = false } = options;
             if (idx === state.activeIdx && !force) return;
@@ -828,6 +831,8 @@
                 }
                 oldInput.remove();
             }
+            // 清除上一句残留的「浅色待输入」状态
+            content.querySelectorAll('.sentence.dictation-pending').forEach((el) => el.classList.remove('dictation-pending'));
 
             const prev = content.querySelector('.sentence.active');
             if (prev) prev.classList.remove('active');
@@ -840,12 +845,31 @@
 
                 const enDiv = cur.querySelector('.en');
                 if (state.dictation && state.playbackMode === 'single-play') {
-                    activateDictationForSentence(cur, idx);
+                    // 听写模式：默认只浅色展示英文，用户点击该句后才出现输入框
+                    if (dictationRevealIdx === idx) {
+                        dictationRevealIdx = -1;
+                        activateDictationForSentence(cur, idx);
+                    } else {
+                        showDictationPending(cur);
+                    }
                 } else {
                     if (enDiv) enDiv.style.display = '';
                 }
             }
             state.activeIdx = idx;
+        }
+
+        /**
+         * 听写模式：浅淡展示英文，等待用户点击句子后再进入输入状态。
+         * @param {HTMLElement} sentenceEl 句子元素。
+         */
+        function showDictationPending(sentenceEl) {
+            if (!sentenceEl) return;
+            // 已进入输入状态则不再覆盖
+            if (sentenceEl.querySelector('.dictation-input')) return;
+            sentenceEl.classList.add('dictation-pending');
+            const enDiv = sentenceEl.querySelector('.en');
+            if (enDiv) enDiv.style.display = '';
         }
 
         function activateDictationForSentence(sentenceEl, idx) {
@@ -1120,6 +1144,19 @@
             const idx = Number(target.dataset.idx);
             const {start, end} = state.data[idx];
             console.log('[CLICK] Sentence clicked - readyState:', audio.readyState, 'networkState:', audio.networkState, 'error:', audio.error);
+
+            // 听写模式：只有点击句子框后才展示输入框
+            if (state.dictation && state.playbackMode === 'single-play' && !target.querySelector('.dictation-input')) {
+                target.classList.remove('dictation-pending');
+                if (idx === state.activeIdx) {
+                    // 点击的是当前句：直接进入输入状态
+                    activateDictationForSentence(target, idx);
+                } else {
+                    // 点击的是其它句：先切过去，高亮该句时再进入输入状态
+                    dictationRevealIdx = idx;
+                }
+            }
+
             playSegment(start, end);
         });
 

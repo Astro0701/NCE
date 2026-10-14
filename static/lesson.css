@@ -609,6 +609,20 @@
     color: #ff6b6b;
 }
 
+/* 听写模式：未点击时英文浅淡展示，点击句子框后才出现输入框 */
+.sentence.dictation-pending {
+    cursor: pointer;
+}
+
+.sentence.dictation-pending .en {
+    color: rgba(224, 224, 224, 0.34);
+    transition: color 0.2s ease;
+}
+
+.sentence.dictation-pending:hover .en {
+    color: rgba(224, 224, 224, 0.6);
+}
+
 /* Toggle Switch Styles */
 .mode-group {
     display: flex;
