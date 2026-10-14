@@ -577,6 +577,16 @@
         color: var(--text-color);
     }
 </style>
+<div class="book-container dictation-entry">
+    <div class="dictation-entry__body">
+        <div class="dictation-entry__text">
+            <h3>随机听写</h3>
+            <p>从你听过的句子中随机出题，听音写句，答对自动进入下一句。</p>
+            <p class="dictation-entry__count" id="dictation-entry-count"></p>
+        </div>
+        <a href="dictation.html" class="dictation-entry__btn">开始听写</a>
+    </div>
+</div>
 <div class="book-container">
     <div class="book-header">
         <h3>全四册课文导航</h3>
@@ -994,6 +1004,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderHistory();
     renderCustomBooks();
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('dictation-entry-count');
+    if (!el || !window.NCEUtils || typeof window.NCEUtils.loadDictationPool !== 'function') {
+        return;
+    }
+    const pool = window.NCEUtils.loadDictationPool();
+    const total = Object.keys(pool).filter((key) => pool[key] && pool[key].en).length;
+    el.textContent = total > 0
+        ? `题库已有 ${total} 句`
+        : '还没有听过的句子，去点读页学习后即可开始';
 });
 </script>
 </body>

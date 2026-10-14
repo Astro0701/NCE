@@ -812,6 +812,78 @@
         }
 
         /** ------------------------------------------------- 
+         *  随机听写：记录「听过」的句子
+         *  播放到的句子会进入 nceDictationPool，供随机听写页出题。
+         *  为减少 localStorage 写入，先入内存队列，定时批量落盘。
+         * ------------------------------------------------- */
+        const BOOK_LABELS = { 1: '第一册', 2: '第二册', 3: '第三册', 4: '第四册' };
+        const heardQueue = new Map();
+        let heardFlushTimer = null;
+
+        function flushHeardRecords() {
+            if (heardFlushTimer) {
+                clearTimeout(heardFlushTimer);
+                heardFlushTimer = null;
+            }
+            if (!heardQueue.size) {
+                return;
+            }
+            if (typeof utils.upsertDictationSentences !== 'function') {
+                heardQueue.clear();
+                return;
+            }
+            const records = Array.from(heardQueue.values());
+            heardQueue.clear();
+            try {
+                utils.upsertDictationSentences(records);
+            } catch (error) {
+                console.warn('Failed to save dictation pool.', error);
+            }
+        }
+
+        function queueHeardSentence(idx) {
+            const item = state.data && state.data[idx];
+            if (!item || !item.en) {
+                return;
+            }
+            const bookToken = isCustomLesson ? 'CUSTOM' : defaultBookToken;
+            const lessonId = isCustomLesson ? customBookName : lessonSlug;
+            if (!lessonId) {
+                return;
+            }
+            const key = `${bookToken}|${lessonId}|${idx}`;
+            if (heardQueue.has(key)) {
+                return;
+            }
+            const bookLabel = isCustomLesson
+                ? (customBookDisplayName || '自定义课本')
+                : (BOOK_LABELS[defaultBookNumber] || '新概念英语');
+            heardQueue.set(key, {
+                key,
+                book: bookToken,
+                bookLabel,
+                lesson: lessonId,
+                lessonTitle: state.title || fallbackTitle || '',
+                idx,
+                start: item.start,
+                end: item.end,
+                en: item.en,
+                cn: item.cn,
+                audio: mp3Src
+            });
+            if (!heardFlushTimer) {
+                heardFlushTimer = setTimeout(flushHeardRecords, 3000);
+            }
+        }
+
+        window.addEventListener('beforeunload', flushHeardRecords);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                flushHeardRecords();
+            }
+        });
+
+        /** ------------------------------------------------- 
          *  高亮 & 自动滚动
          * ------------------------------------------------- */
         /** 听写模式下：用户点击句子后，需要立即进入输入状态的句子索引（-1 表示无） */
@@ -857,6 +929,8 @@
                 }
             }
             state.activeIdx = idx;
+            // 记录「听过」的句子，供随机听写出题
+            queueHeardSentence(idx);
         }
 
         /**

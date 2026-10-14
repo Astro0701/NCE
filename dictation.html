@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="新概念英语随机听写练习：从学过的句子中随机出题，听音写句，答对自动进入下一句。">
+    <meta name="keywords" content="新概念英语,随机听写,听写练习,英语听力,NCE">
+    <link rel="canonical" href="https://nce.hoothin.com/dictation.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:site_name" content="新概念英语在线点读">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="新概念英语 · 随机听写">
+    <meta property="og:description" content="从学过的句子中随机出题，听音写句，答对自动进入下一句。">
+    <meta property="og:url" content="https://nce.hoothin.com/dictation.html">
+    <meta property="og:image" content="https://nce.hoothin.com/static/ogimage.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="新概念英语随机听写界面">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="新概念英语 · 随机听写">
+    <meta name="twitter:description" content="从学过的句子中随机出题，听音写句，答对自动进入下一句。">
+    <meta name="twitter:image" content="https://nce.hoothin.com/static/ogimage.jpg">
+    <title>新概念英语 - 随机听写</title>
+    <link rel="stylesheet" href="static/base.css">
+    <link rel="stylesheet" href="static/dictation.css">
+    <script src="static/utils.js"></script>
+    <script src="static/dictation.js"></script>
+</head>
+<body>
+<div class="container">
+    <a href="index.html">
+        <div class="header">
+            <h1>新概念英语</h1>
+            <p>New Concept English</p>
+        </div>
+    </a>
+</div>
+
+<div class="book-container">
+    <div class="book-header">
+        <div class="book-title">
+            <h3>随机听写</h3>
+            <hr>
+            <p>从你听过的句子中随机出题，听音写句</p>
+        </div>
+    </div>
+    <hr>
+
+    <!-- 空题库 -->
+    <div id="dictation-empty" class="dictation-empty" hidden>
+        <p class="dictation-empty__title">还没有「听过」的句子</p>
+        <p>先去 <a href="index.html">点读页</a> 学几课，播放过的句子会自动进入题库。</p>
+        <p class="dictation-empty__actions">
+            <button type="button" id="dictation-backfill" class="dictation-btn" hidden>从「最近播放」生成题库</button>
+            <a class="dictation-btn dictation-btn--primary" href="index.html">去点读</a>
+        </p>
+        <p id="dictation-backfill-msg" class="dictation-hint" aria-live="polite"></p>
+    </div>
+
+    <!-- 开始 -->
+    <div id="dictation-start" class="dictation-start" hidden>
+        <p class="dictation-start__count" id="dictation-start-count"></p>
+        <p class="dictation-start__tip">系统会朗读一个你学过的句子，请把你听到的英文写下来；答对后自动进入下一句。</p>
+        <button type="button" id="dictation-start-btn" class="dictation-btn dictation-btn--primary dictation-btn--lg">开始听写</button>
+    </div>
+
+    <!-- 练习 -->
+    <div id="dictation-practice" class="dictation-practice" hidden>
+        <div class="dictation-stats" id="dictation-stats"></div>
+        <div class="dictation-card">
+            <div class="dictation-card__meta" id="dictation-meta"></div>
+            <p class="dictation-card__cn" id="dictation-cn"></p>
+            <button type="button" id="dictation-replay" class="dictation-btn dictation-btn--play">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+                <span>播放 / 重听</span>
+            </button>
+            <input id="dictation-input" class="dictation-input" type="text"
+                   placeholder="请输入你听到的英文句子…" autocomplete="off" autocapitalize="off"
+                   spellcheck="false" aria-label="听写输入框">
+            <p id="dictation-feedback" class="dictation-hint" aria-live="polite"></p>
+            <p id="dictation-reveal" class="dictation-reveal" hidden></p>
+            <div class="dictation-card__actions">
+                <button type="button" id="dictation-show" class="dictation-btn">显示答案</button>
+                <button type="button" id="dictation-skip" class="dictation-btn">跳过</button>
+                <button type="button" id="dictation-next" class="dictation-btn dictation-btn--primary" hidden>下一句</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<audio id="dictation-audio"></audio>
+
+<footer>
+    <hr>
+    <p>© 2025 <a target="_blank" href="https://www.hoothin.com">hoothin</a>.</p>
+</footer>
+</body>
+</html>

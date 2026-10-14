@@ -1,0 +1,247 @@
+/* 随机听写页样式 */
+
+/* 压缩头部与留白，让题目卡片尽量落在首屏内 */
+.container .header {
+    padding: 18px 20px 8px;
+}
+
+.container .header h1 {
+    font-size: 1.85em;
+    margin-bottom: 6px;
+}
+
+.book-container {
+    padding: 16px;
+}
+
+.dictation-empty,
+.dictation-start {
+    text-align: center;
+    padding: 26px 16px;
+    color: var(--text-color-dark);
+    line-height: 1.7;
+}
+
+.dictation-empty__title {
+    color: var(--text-color);
+    font-size: 1.12em;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.dictation-empty a {
+    color: var(--primary-color);
+}
+
+.dictation-empty__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.dictation-start__count {
+    color: var(--text-color);
+    font-size: 1.08em;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.dictation-start__tip {
+    max-width: 540px;
+    margin: 0 auto 20px;
+}
+
+/* 按钮 */
+.dictation-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(29, 185, 84, 0.45);
+    background: rgba(29, 185, 84, 0.12);
+    color: var(--text-color);
+    font-size: 0.92em;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.dictation-btn:hover {
+    background: rgba(29, 185, 84, 0.24);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.dictation-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
+}
+
+/* display 会覆盖 [hidden] 的默认样式，这里显式还原 */
+.dictation-btn[hidden] {
+    display: none;
+}
+
+.dictation-btn--primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #0f0f0f;
+    font-weight: 600;
+}
+
+.dictation-btn--primary:hover {
+    background: #22c95f;
+    color: #0f0f0f;
+}
+
+.dictation-btn--lg {
+    padding: 12px 36px;
+    font-size: 1em;
+}
+
+.dictation-btn--play {
+    padding: 10px 22px;
+    font-size: 0.95em;
+}
+
+.dictation-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* 统计 */
+.dictation-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: center;
+    margin-bottom: 18px;
+    color: var(--text-color-dark);
+    font-size: 0.85em;
+}
+
+.dictation-stats b {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* 题目卡片 */
+.dictation-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 20px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--container-highlight);
+    background: rgba(33, 33, 33, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+}
+
+.dictation-card__meta {
+    font-size: 0.78em;
+    letter-spacing: 0.6px;
+    color: var(--text-color-dark);
+    text-transform: uppercase;
+}
+
+.dictation-card__cn {
+    font-size: 1.08em;
+    color: var(--text-color);
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* 输入框 */
+.dictation-input {
+    width: min(560px, 100%);
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #3a3a3a;
+    background: #1f1f1f;
+    color: var(--text-color);
+    font-size: 1.05em;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.dictation-input:focus {
+    border-color: rgba(29, 185, 84, 0.6);
+}
+
+.dictation-input.is-correct {
+    border-color: var(--primary-color);
+    background: rgba(29, 185, 84, 0.12);
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.22);
+}
+
+.dictation-input.is-wrong {
+    border-color: #ff5c5c;
+    background: rgba(255, 92, 92, 0.12);
+    box-shadow: 0 0 0 2px rgba(255, 92, 92, 0.2);
+}
+
+/* 反馈与答案 */
+.dictation-hint {
+    min-height: 20px;
+    margin: 0;
+    font-size: 0.85em;
+    color: var(--text-color-dark);
+}
+
+.dictation-hint.is-correct {
+    color: var(--primary-color);
+}
+
+.dictation-hint.is-wrong {
+    color: #ff6b6b;
+}
+
+.dictation-reveal {
+    margin: 0;
+    padding: 9px 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 0.95em;
+    line-height: 1.55;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.dictation-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    .dictation-card {
+        padding: 18px 14px 16px;
+        gap: 12px;
+    }
+    .dictation-btn {
+        padding: 8px 14px;
+        font-size: 0.88em;
+    }
+    .dictation-btn--lg {
+        padding: 11px 28px;
+    }
+    .dictation-empty,
+    .dictation-start {
+        padding: 18px 10px;
+    }
+}

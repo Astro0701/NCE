@@ -152,3 +152,66 @@
         padding: 12px 20px 14px;
     }
 }
+
+/* 随机听写入口 */
+.dictation-entry {
+    margin-bottom: 20px;
+}
+
+.dictation-entry__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.dictation-entry__text h3 {
+    font-size: 1.25em;
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+
+.dictation-entry__text p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text-color-dark);
+    line-height: 1.5;
+}
+
+.dictation-entry__count {
+    margin-top: 6px;
+    font-size: 0.82em;
+    color: var(--primary-color);
+}
+
+.dictation-entry__btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: #0f0f0f;
+    font-weight: 600;
+    font-size: 0.95em;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dictation-entry__btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(29, 185, 84, 0.25);
+}
+
+@media (max-width: 768px) {
+    .dictation-entry__body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+    .dictation-entry__btn {
+        width: 100%;
+    }
+}

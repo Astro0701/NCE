@@ -643,6 +643,112 @@
         }
     }
 
+    /** -------------------------------------------------
+     *  随机听写：题库（记录用户听过的句子）
+     * ------------------------------------------------- */
+
+    const DICTATION_POOL_KEY = 'nceDictationPool';
+    const DICTATION_POOL_LIMIT = 3000;
+
+    /**
+     * 听写答案归一化：忽略大小写、空格与标点，并把全角转半角（NFKC）。
+     * @param {*} value 原始文本。
+     * @returns {string} 归一化后的字符串。
+     */
+    function normalizeAnswer(value) {
+        return String(value === null || value === undefined ? '' : value)
+            .normalize('NFKC')
+            .replace(/[^a-zA-Z]/g, '')
+            .toLowerCase();
+    }
+
+    /**
+     * 读取听写题库。题库以「句子」为单位，键为 `book|lesson|idx`。
+     * @returns {Object} 题库对象；任何异常都退化为空对象。
+     */
+    function loadDictationPool() {
+        let stored = null;
+        try {
+            stored = localStorage.getItem(DICTATION_POOL_KEY);
+        } catch (_) {
+            return {};
+        }
+        if (!stored) {
+            return {};
+        }
+        try {
+            const parsed = JSON.parse(stored);
+            return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+        } catch (_) {
+            return {};
+        }
+    }
+
+    /**
+     * 写入听写题库。
+     * @param {Object} pool 题库对象。
+     * @returns {boolean} 是否写入成功。
+     */
+    function saveDictationPool(pool) {
+        if (!pool || typeof pool !== 'object' || Array.isArray(pool)) {
+            return false;
+        }
+        try {
+            localStorage.setItem(DICTATION_POOL_KEY, JSON.stringify(pool));
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    /**
+     * 批量写入/更新「听过的句子」，保留已有的答题统计字段。
+     * @param {Array<Object>} records 句子记录数组，每项必须含 key。
+     * @returns {number} 新增的条数。
+     */
+    function upsertDictationSentences(records) {
+        if (!Array.isArray(records) || !records.length) {
+            return 0;
+        }
+        const pool = loadDictationPool();
+        const now = Date.now();
+        let added = 0;
+        records.forEach((rec) => {
+            if (!rec || !rec.key) {
+                return;
+            }
+            const existing = pool[rec.key];
+            if (existing) {
+                existing.en = rec.en;
+                existing.cn = rec.cn;
+                existing.start = rec.start;
+                existing.end = rec.end;
+                existing.audio = rec.audio;
+                if (rec.lessonTitle) existing.lessonTitle = rec.lessonTitle;
+                if (rec.bookLabel) existing.bookLabel = rec.bookLabel;
+                existing.lastHeardAt = now;
+            } else {
+                pool[rec.key] = Object.assign({}, rec, {
+                    correctCount: 0,
+                    wrongCount: 0,
+                    firstHeardAt: now,
+                    lastHeardAt: now
+                });
+                added += 1;
+            }
+        });
+        // 超限时按最近听过时间裁剪最旧的数据
+        const keys = Object.keys(pool);
+        if (keys.length > DICTATION_POOL_LIMIT) {
+            keys.sort((a, b) => (pool[a].lastHeardAt || 0) - (pool[b].lastHeardAt || 0));
+            keys.slice(0, keys.length - DICTATION_POOL_LIMIT).forEach((key) => {
+                delete pool[key];
+            });
+        }
+        saveDictationPool(pool);
+        return added;
+    }
+
     const utils = {
         hashString,
         escapeForSvg,
@@ -668,7 +774,13 @@
         clearWordBook,
         normalizeWord,
         speakWord,
-        canSpeak
+        canSpeak,
+        // 随机听写题库
+        DICTATION_POOL_KEY,
+        normalizeAnswer,
+        loadDictationPool,
+        saveDictationPool,
+        upsertDictationSentences
     };
 
     if (typeof window !== 'undefined') {
