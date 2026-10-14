@@ -2188,6 +2188,24 @@
         if (wordbookBackdrop) {
             wordbookBackdrop.addEventListener('click', closeWordbook);
         }
+        // 点击抽屉以外的区域（如左侧课文区）收起错题本
+        document.addEventListener('pointerdown', (event) => {
+            if (!wordbookDrawer || !wordbookDrawer.classList.contains('is-open')) {
+                return;
+            }
+            const target = event.target;
+            if (!(target instanceof Node)) {
+                return;
+            }
+            // 点在抽屉内部或开关按钮上时不收起
+            if (wordbookDrawer.contains(target)) {
+                return;
+            }
+            if (wordbookToggle && wordbookToggle.contains(target)) {
+                return;
+            }
+            closeWordbook();
+        });
         if (wordbookSearch) {
             wordbookSearch.addEventListener('input', renderWordbook);
         }
