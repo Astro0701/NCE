@@ -1,5 +1,4 @@
 # 新概念英语（New Concept English）-全四册
-## 🔗https://nce.hoothin.com
 ### 在线课文点读
 
 在线课文朗读，单句点读，随时随地在线学习。
