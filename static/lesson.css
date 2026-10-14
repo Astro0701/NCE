@@ -568,6 +568,45 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1em;
+    background: #1f1f1f;
+    color: var(--text-color);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* 听写实时校验：正确 */
+.dictation-input.is-correct {
+    border-color: var(--primary-color);
+    background: rgba(29, 185, 84, 0.12);
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.22);
+}
+
+/* 听写实时校验：错误 */
+.dictation-input.is-wrong {
+    border-color: #ff5c5c;
+    background: rgba(255, 92, 92, 0.12);
+    box-shadow: 0 0 0 2px rgba(255, 92, 92, 0.2);
+}
+
+.dictation-hint {
+    display: none;
+    width: 90%;
+    margin: 0 0 6px;
+    font-size: 0.82em;
+    line-height: 1.35;
+    letter-spacing: 0.2px;
+}
+
+.dictation-hint.is-visible {
+    display: block;
+}
+
+.dictation-hint.is-correct {
+    color: var(--primary-color);
+}
+
+.dictation-hint.is-wrong {
+    color: #ff6b6b;
 }
 
 /* Toggle Switch Styles */

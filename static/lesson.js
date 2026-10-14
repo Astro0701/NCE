@@ -824,6 +824,7 @@
                 const parentSentence = oldInput.closest('.sentence');
                 if (parentSentence) {
                     parentSentence.querySelector('.en').style.display = '';
+                    parentSentence.querySelectorAll('.dictation-hint').forEach((el) => el.remove());
                 }
                 oldInput.remove();
             }
@@ -857,32 +858,109 @@
             input.type = 'text';
             input.className = 'dictation-input';
             input.placeholder = '请输入英文句子...';
+            input.autocomplete = 'off';
+            input.autocapitalize = 'off';
+            input.spellcheck = false;
+
+            const hint = document.createElement('p');
+            hint.className = 'dictation-hint';
+            hint.setAttribute('aria-live', 'polite');
+
             sentenceEl.appendChild(input);
+            sentenceEl.appendChild(hint);
             input.focus();
 
-            const correctAnswer = state.data[idx].en.replace(/[^a-zA-Z]/g, '').toLowerCase();
+            // 比对时忽略大小写、空格与标点，只比对字母；
+            // 同时做 NFKC 归一化，兼容中文输入法全角状态打出的全角字母（如 ＥＸＣＵＳＥ → EXCUSE）
+            const normalize = (value) => String(value || '')
+                .normalize('NFKC')
+                .replace(/[^a-zA-Z]/g, '')
+                .toLowerCase();
+            const correctAnswer = normalize(state.data[idx] && state.data[idx].en);
 
-            input.addEventListener('input', e => {
-                const userInput = e.target.value.replace(/[^a-zA-Z]/g, '').toLowerCase();
+            if (!correctAnswer) {
+                input.disabled = true;
+                hint.textContent = '该句没有可听写的英文内容';
+                hint.classList.add('is-visible');
+                return;
+            }
 
-                if (userInput === correctAnswer) {
-                    input.disabled = true;
-                    const nextIdx = idx + 1;
+            let solved = false;
+
+            /** 统一更新输入框与提示的对错状态 */
+            function setState(stateName, message) {
+                input.classList.remove('is-correct', 'is-wrong');
+                hint.classList.remove('is-correct', 'is-wrong', 'is-visible');
+                if (stateName) {
+                    input.classList.add(stateName);
+                    hint.classList.add(stateName);
+                }
+                hint.textContent = message || '';
+                if (message) {
+                    hint.classList.add('is-visible');
+                }
+            }
+
+            function commonPrefixLength(a, b) {
+                const limit = Math.min(a.length, b.length);
+                let i = 0;
+                while (i < limit && a[i] === b[i]) {
+                    i++;
+                }
+                return i;
+            }
+
+            function finishCorrect() {
+                if (solved) return;
+                solved = true;
+                setState('is-correct', '✓ 拼写正确！');
+                input.disabled = true;
+                if (enDiv) {
+                    enDiv.style.display = '';
+                }
+                const nextIdx = idx + 1;
+                setTimeout(() => {
                     if (nextIdx < state.data.length) {
                         const { start, end } = state.data[nextIdx];
                         playSegment(start, end);
                     } else {
                         audio.pause();
-                        // Last sentence finished, clean up the UI
+                        // 最后一句完成，清理界面
                         input.remove();
-                        if (enDiv) {
-                            enDiv.style.display = '';
-                        }
+                        hint.remove();
                         sentenceEl.classList.remove('active');
                         state.activeIdx = -1;
-                        // Scroll to top of page
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
+                }, 700);
+            }
+
+            /** 实时校验：完全正确 -> 通过；与答案前缀不符 -> 判错 */
+            function evaluate() {
+                if (solved) return;
+                const userInput = normalize(input.value);
+                if (userInput === correctAnswer) {
+                    finishCorrect();
+                    return;
+                }
+                if (!userInput) {
+                    setState(null, '');
+                    return;
+                }
+                if (correctAnswer.startsWith(userInput)) {
+                    // 目前与答案一致，只是还没输完
+                    setState(null, '');
+                    return;
+                }
+                const matched = commonPrefixLength(userInput, correctAnswer);
+                setState('is-wrong', `✗ 拼写有误，已正确 ${matched}/${correctAnswer.length} 个字母`);
+            }
+
+            input.addEventListener('input', evaluate);
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    evaluate();
                 }
             });
         }
