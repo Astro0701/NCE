@@ -12,6 +12,31 @@
         return hash;
     }
 
+    /**
+     * 转义 HTML 特殊字符，用于任何拼接进 innerHTML 的动态文本。
+     * 官方 LRC 与自定义课程内容都视为不可信输入。
+     * @param {*} value 待转义的值。
+     * @returns {string} 可安全插入 HTML 的字符串。
+     */
+    function escapeHtml(value) {
+        return String(value === null || value === undefined ? '' : value).replace(/[&<>'"]/g, (char) => {
+            switch (char) {
+                case '&':
+                    return '&amp;';
+                case '<':
+                    return '&lt;';
+                case '>':
+                    return '&gt;';
+                case '"':
+                    return '&quot;';
+                case '\'':
+                    return '&#39;';
+                default:
+                    return char;
+            }
+        });
+    }
+
     function escapeForSvg(value) {
         return String(value || '').replace(/[&<>'"]/g, (char) => {
             switch (char) {
@@ -512,9 +537,282 @@
         });
     }
 
+    /** -------------------------------------------------
+     *  错题本（生词本）
+     * ------------------------------------------------- */
+
+    const WORD_BOOK_KEY = 'nceWordBook';
+    const WORD_BOOK_LIMIT = 500;
+
+    /**
+     * 规范化单词：仅保留字母、连字符与撇号，转小写。
+     * 含数字、尖括号等非字母字符的输入一律拒绝，避免把 HTML 片段
+     * 或编号误存为生词。
+     * @param {*} raw 原始输入。
+     * @returns {string} 规范化后的单词，非法时返回空串。
+     */
+    function normalizeWord(raw) {
+        const source = String(raw === null || raw === undefined ? '' : raw).trim();
+        if (!source) {
+            return '';
+        }
+        // 仅允许单个词：字母、撇号、连字符。含空格/数字/尖括号等一律拒绝，
+        // 避免把多词选区、编号或 HTML 片段误存为生词。
+        if (!/^[A-Za-z'\-]+$/.test(source)) {
+            return '';
+        }
+        const cleaned = source
+            .replace(/[^A-Za-z'\-]/g, '')
+            .replace(/^['\-]+|['\-]+$/g, '')
+            .toLowerCase();
+        // 至少包含一个字母，且长度合理
+        if (!/[a-z]/.test(cleaned) || cleaned.length > 48) {
+            return '';
+        }
+        return cleaned;
+    }
+
+    /**
+     * 读取错题本列表。任何异常都退化为空数组，避免阻塞页面。
+     * @returns {Array<Object>} 生词条目数组。
+     */
+    function loadWordBook() {
+        let stored = null;
+        try {
+            stored = localStorage.getItem(WORD_BOOK_KEY);
+        } catch (error) {
+            console.warn('Unable to read word book.', error);
+            return [];
+        }
+        if (!stored) {
+            return [];
+        }
+        try {
+            const parsed = JSON.parse(stored);
+            if (!Array.isArray(parsed)) {
+                return [];
+            }
+            // 逐条净化，丢弃结构损坏的条目
+            return parsed
+                .map((item) => {
+                    if (!item || typeof item !== 'object' || Array.isArray(item)) {
+                        return null;
+                    }
+                    const word = normalizeWord(item.word);
+                    if (!word) {
+                        return null;
+                    }
+                    return {
+                        word,
+                        sentence: String(item.sentence || '').slice(0, 500),
+                        translation: String(item.translation || '').slice(0, 500),
+                        book: String(item.book || ''),
+                        lesson: String(item.lesson || ''),
+                        addedAt: Number.isFinite(item.addedAt) ? item.addedAt : Date.now(),
+                        reviewCount: Number.isFinite(item.reviewCount) ? item.reviewCount : 0,
+                        mastered: item.mastered === true
+                    };
+                })
+                .filter(Boolean);
+        } catch (error) {
+            console.warn('Word book data is corrupted, resetting.', error);
+            return [];
+        }
+    }
+
+    /**
+     * 写入错题本列表。
+     * @param {Array<Object>} list 生词条目数组。
+     * @returns {boolean} 写入成功返回 true。
+     */
+    function saveWordBook(list) {
+        if (!Array.isArray(list)) {
+            return false;
+        }
+        try {
+            localStorage.setItem(WORD_BOOK_KEY, JSON.stringify(list.slice(0, WORD_BOOK_LIMIT)));
+            return true;
+        } catch (error) {
+            console.warn('Unable to save word book.', error);
+            return false;
+        }
+    }
+
+    /**
+     * 判断单词是否已在错题本中。
+     * @param {string} word 单词。
+     * @returns {boolean} 已存在返回 true。
+     */
+    function isWordInBook(word) {
+        const target = normalizeWord(word);
+        if (!target) {
+            return false;
+        }
+        return loadWordBook().some((item) => item.word === target);
+    }
+
+    /**
+     * 添加单词到错题本。同一单词只保留首次记录，重复添加仅累加复习次数。
+     * @param {Object} entry 生词条目。
+     * @returns {{added: boolean, word: string}} 添加结果。
+     */
+    function addWordToBook(entry) {
+        const word = normalizeWord(entry && entry.word);
+        if (!word) {
+            return { added: false, word: '' };
+        }
+        const list = loadWordBook();
+        const existing = list.find((item) => item.word === word);
+        if (existing) {
+            existing.reviewCount += 1;
+            saveWordBook(list);
+            return { added: false, word };
+        }
+        list.unshift({
+            word,
+            sentence: String((entry && entry.sentence) || '').slice(0, 500),
+            translation: String((entry && entry.translation) || '').slice(0, 500),
+            book: String((entry && entry.book) || ''),
+            lesson: String((entry && entry.lesson) || ''),
+            addedAt: Date.now(),
+            reviewCount: 0,
+            mastered: false
+        });
+        saveWordBook(list);
+        return { added: true, word };
+    }
+
+    /**
+     * 从错题本移除单词。
+     * @param {string} word 单词。
+     * @returns {boolean} 是否发生了删除。
+     */
+    function removeWordFromBook(word) {
+        const target = normalizeWord(word);
+        if (!target) {
+            return false;
+        }
+        const list = loadWordBook();
+        const next = list.filter((item) => item.word !== target);
+        if (next.length === list.length) {
+            return false;
+        }
+        saveWordBook(next);
+        return true;
+    }
+
+    /**
+     * 更新单词条目的部分字段（如复习次数、掌握状态）。
+     * @param {string} word 单词。
+     * @param {Object} patch 需要合并的字段。
+     * @returns {boolean} 是否更新成功。
+     */
+    function updateWordInBook(word, patch) {
+        const target = normalizeWord(word);
+        if (!target || !patch || typeof patch !== 'object') {
+            return false;
+        }
+        const list = loadWordBook();
+        const item = list.find((entry) => entry.word === target);
+        if (!item) {
+            return false;
+        }
+        if (Number.isFinite(patch.reviewCount)) {
+            item.reviewCount = patch.reviewCount;
+        }
+        if (typeof patch.mastered === 'boolean') {
+            item.mastered = patch.mastered;
+        }
+        saveWordBook(list);
+        return true;
+    }
+
+    /**
+     * 清空错题本。
+     * @returns {boolean} 是否清空成功。
+     */
+    function clearWordBook() {
+        return saveWordBook([]);
+    }
+
+    /** -------------------------------------------------
+     *  单词发音（浏览器内置 TTS）
+     * ------------------------------------------------- */
+
+    let cachedVoices = null;
+
+    /**
+     * 获取英文语音列表，优先选择美音。
+     * @returns {SpeechSynthesisVoice|null} 可用语音。
+     */
+    function pickEnglishVoice() {
+        if (typeof window === 'undefined' || !window.speechSynthesis) {
+            return null;
+        }
+        const voices = cachedVoices || window.speechSynthesis.getVoices() || [];
+        if (!voices.length) {
+            return null;
+        }
+        cachedVoices = voices;
+        const english = voices.filter((voice) => /^en(-|_|$)/i.test(voice.lang || ''));
+        if (!english.length) {
+            return null;
+        }
+        // 优先 en-US，其次任意英文语音
+        return (
+            english.find((voice) => /^en[-_]US$/i.test(voice.lang)) ||
+            english.find((voice) => /^en[-_]GB$/i.test(voice.lang)) ||
+            english[0]
+        );
+    }
+
+    /**
+     * 检测当前环境是否支持语音合成。
+     * @returns {boolean} 支持返回 true。
+     */
+    function canSpeak() {
+        return typeof window !== 'undefined' && !!window.speechSynthesis &&
+            typeof window.SpeechSynthesisUtterance === 'function';
+    }
+
+    /**
+     * 朗读单词。使用浏览器内置 TTS，无需网络。
+     * @param {string} word 待朗读单词。
+     * @param {Object} [options] 配置项。
+     * @param {number} [options.rate] 语速，默认 0.9。
+     * @returns {boolean} 是否成功发起朗读。
+     */
+    function speakWord(word, options = {}) {
+        const text = String(word || '').trim();
+        if (!text || !canSpeak()) {
+            return false;
+        }
+        try {
+            // 打断上一次朗读，避免快速连点造成排队
+            window.speechSynthesis.cancel();
+            const utterance = new window.SpeechSynthesisUtterance(text);
+            const voice = pickEnglishVoice();
+            if (voice) {
+                utterance.voice = voice;
+                utterance.lang = voice.lang;
+            } else {
+                utterance.lang = 'en-US';
+            }
+            const rate = Number.isFinite(options.rate) ? options.rate : 0.9;
+            utterance.rate = Math.min(Math.max(rate, 0.5), 2);
+            utterance.pitch = 1;
+            window.speechSynthesis.speak(utterance);
+            return true;
+        } catch (error) {
+            console.warn('Speech synthesis failed.', error);
+            return false;
+        }
+    }
+
     const utils = {
         hashString,
         escapeForSvg,
+        escapeHtml,
         createPlaceholderCover,
         deriveLrcUrl,
         parseCustomBookKey,
@@ -525,7 +823,18 @@
         getCustomLessonsWithDefaults,
         detectShareEnvironment,
         buildSharePayload,
-        openShare
+        openShare,
+        // 错题本（生词本）
+        loadWordBook,
+        saveWordBook,
+        addWordToBook,
+        removeWordFromBook,
+        isWordInBook,
+        updateWordInBook,
+        clearWordBook,
+        normalizeWord,
+        speakWord,
+        canSpeak
     };
 
     if (typeof window !== 'undefined') {

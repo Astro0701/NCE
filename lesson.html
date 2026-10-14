@@ -151,6 +151,54 @@
     <main id="content"></main>
 </div>
 
+<!-- 错题本抽屉 -->
+<button id="wordbook-toggle" class="wordbook-toggle" type="button" aria-expanded="false" aria-controls="wordbook-drawer" title="错题本（生词本）">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+    </svg>
+    <span class="wordbook-toggle__count" id="wordbook-count" hidden>0</span>
+    <span class="sr-only">打开错题本</span>
+</button>
+
+<div id="wordbook-backdrop" class="wordbook-backdrop" hidden></div>
+
+<aside id="wordbook-drawer" class="wordbook-drawer" aria-hidden="true" aria-label="错题本">
+    <header class="wordbook-header">
+        <div class="wordbook-header__title">
+            <h2>错题本</h2>
+            <p id="wordbook-subtitle">选中课文中的单词即可加入</p>
+        </div>
+        <button id="wordbook-close" class="wordbook-close" type="button" aria-label="关闭错题本">×</button>
+    </header>
+
+    <div class="wordbook-toolbar">
+        <input id="wordbook-search" type="search" class="wordbook-search" placeholder="搜索生词..." aria-label="搜索生词">
+        <button id="wordbook-clear" class="wordbook-clear" type="button">清空</button>
+    </div>
+
+    <div id="wordbook-list" class="wordbook-list" role="list"></div>
+
+    <p id="wordbook-empty" class="wordbook-empty">还没有生词。<br>在课文中用鼠标划选一个英文单词，点击「加入错题本」。</p>
+
+    <footer class="wordbook-footer">
+        <label class="wordbook-tts-toggle">
+            <input type="checkbox" id="wordbook-autoplay" checked>
+            <span>点击卡片自动发音</span>
+        </label>
+    </footer>
+</aside>
+
+<!-- 划词浮层 -->
+<div id="word-popover" class="word-popover" aria-hidden="true">
+    <span id="word-popover-text" class="word-popover__word"></span>
+    <div class="word-popover__actions">
+        <button id="word-popover-add" class="word-popover__btn word-popover__btn--primary" type="button">加入错题本</button>
+        <button id="word-popover-speak" class="word-popover__btn" type="button" aria-label="朗读单词">发音</button>
+    </div>
+    <p id="word-popover-hint" class="word-popover__hint" aria-live="polite"></p>
+</div>
+
 <div class="player-container">
     <div class="custom-player-wrapper">
         <audio id="player"></audio>

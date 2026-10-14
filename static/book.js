@@ -27,7 +27,8 @@
         const {
             createPlaceholderCover,
             parseCustomBookKey,
-            getCustomLessonsWithDefaults
+            getCustomLessonsWithDefaults,
+            escapeHtml
         } = utils;
 
         function parseHash() {
@@ -95,7 +96,7 @@
                 }
                 element.innerHTML = `
                     <span class="lesson-number">第${lessonNumber}课</span>
-                    <span class="lesson-title">${lesson.title}</span>
+                    <span class="lesson-title">${escapeHtml(lesson.title)}</span>
                 `;
                 container.appendChild(element);
             });
@@ -243,7 +244,7 @@
                 item.href = `lesson.html#CUSTOM/${encodeURIComponent(targetName)}/${lessonIdx}`;
                 item.innerHTML = `
                     <span class="lesson-number">第${lessonIdx + 1}课</span>
-                    <span class="lesson-title">${lesson.title}</span>
+                    <span class="lesson-title">${escapeHtml(lesson.title)}</span>
                 `;
                 if (!Number.isNaN(lastIndex) && lastIndex === lessonIdx) {
                     item.classList.add('last-read');

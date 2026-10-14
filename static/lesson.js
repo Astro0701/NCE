@@ -23,7 +23,16 @@
             loadStoredCustomData,
             prepareCustomLessons,
             openShare,
-            detectShareEnvironment
+            detectShareEnvironment,
+            escapeHtml,
+            loadWordBook,
+            addWordToBook,
+            removeWordFromBook,
+            isWordInBook,
+            updateWordInBook,
+            normalizeWord,
+            speakWord,
+            canSpeak
         } = utils;
 
         /** 读取 URL hash 并构造资源路径 */
@@ -155,6 +164,8 @@
         // Monitor audio loading and state changes
         let stalledCount = 0;
         let lastStalledTime = 0;
+        // 必须先声明：markAudioReady 会在事件回调中被提前调用
+        let audioReady = false;
         
         function enableAudioUi() {
             content.style.pointerEvents = '';
@@ -181,7 +192,6 @@
             console.log('[AUDIO] loadeddata - readyState:', audio.readyState);
             markAudioReady('loadeddata');
         });
-        let audioReady = false;
         audio.addEventListener('canplay', () => {
             console.log('[AUDIO] canplay - readyState:', audio.readyState);
             stalledCount = 0; // Reset stalled counter on successful load
@@ -671,8 +681,8 @@
             content.innerHTML = state.data.map(
                 (item, idx) =>
                     `<div class="sentence" data-idx="${idx}">
-                    <div class="en">${item.en}</div>
-                    <div class="cn">${item.cn}</div>
+                    <div class="en">${escapeHtml(item.en)}</div>
+                    <div class="cn">${escapeHtml(item.cn)}</div>
                 </div>`
             ).join('');
         }
@@ -1541,6 +1551,508 @@
         }
 
         loadLessonsData();
+
+        /** -------------------------------------------------
+         *  错题本（生词本）
+         * ------------------------------------------------- */
+
+        const wordbookToggle = document.getElementById('wordbook-toggle');
+        const wordbookDrawer = document.getElementById('wordbook-drawer');
+        const wordbookClose = document.getElementById('wordbook-close');
+        const wordbookBackdrop = document.getElementById('wordbook-backdrop');
+        const wordbookList = document.getElementById('wordbook-list');
+        const wordbookEmpty = document.getElementById('wordbook-empty');
+        const wordbookCount = document.getElementById('wordbook-count');
+        const wordbookSearch = document.getElementById('wordbook-search');
+        const wordbookClear = document.getElementById('wordbook-clear');
+        const wordbookAutoplay = document.getElementById('wordbook-autoplay');
+        const wordPopover = document.getElementById('word-popover');
+        const wordPopoverText = document.getElementById('word-popover-text');
+        const wordPopoverAdd = document.getElementById('word-popover-add');
+        const wordPopoverSpeak = document.getElementById('word-popover-speak');
+        const wordPopoverHint = document.getElementById('word-popover-hint');
+
+        const AUTOPLAY_KEY = 'nceWordbookAutoplay';
+        const MOBILE_QUERY = '(max-width: 768px)';
+
+        /** 当前划词上下文 */
+        let pendingSelection = null;
+
+        function isMobileLayout() {
+            return typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
+        }
+
+        /**
+         * 同步播放器实际高度到 CSS 变量，避免抽屉被换行后的播放器遮挡。
+         * 播放器在移动端会 flex-wrap 换行，高度并不固定。
+         */
+        function syncPlayerHeight() {
+            const playerContainer = document.querySelector('.player-container');
+            if (!playerContainer) {
+                return;
+            }
+            const height = playerContainer.getBoundingClientRect().height;
+            if (height > 0) {
+                document.documentElement.style.setProperty('--player-height', `${Math.round(height)}px`);
+            }
+        }
+
+        syncPlayerHeight();
+        window.addEventListener('resize', syncPlayerHeight);
+        window.addEventListener('orientationchange', syncPlayerHeight);
+        if (typeof ResizeObserver === 'function') {
+            const playerContainer = document.querySelector('.player-container');
+            if (playerContainer) {
+                new ResizeObserver(syncPlayerHeight).observe(playerContainer);
+            }
+        }
+
+        /** -------------------------------------------------
+         *  抽屉开合
+         * ------------------------------------------------- */
+
+        function openWordbook() {
+            if (!wordbookDrawer) return;
+            syncPlayerHeight();
+            renderWordbook();
+            wordbookDrawer.classList.add('is-open');
+            wordbookDrawer.setAttribute('aria-hidden', 'false');
+            if (wordbookToggle) {
+                wordbookToggle.classList.add('is-open');
+                wordbookToggle.setAttribute('aria-expanded', 'true');
+            }
+            if (wordbookBackdrop && isMobileLayout()) {
+                wordbookBackdrop.hidden = false;
+                requestAnimationFrame(() => wordbookBackdrop.classList.add('is-visible'));
+            }
+        }
+
+        function closeWordbook() {
+            if (!wordbookDrawer) return;
+            wordbookDrawer.classList.remove('is-open');
+            wordbookDrawer.setAttribute('aria-hidden', 'true');
+            if (wordbookToggle) {
+                wordbookToggle.classList.remove('is-open');
+                wordbookToggle.setAttribute('aria-expanded', 'false');
+            }
+            if (wordbookBackdrop) {
+                wordbookBackdrop.classList.remove('is-visible');
+                setTimeout(() => {
+                    if (!wordbookBackdrop.classList.contains('is-visible')) {
+                        wordbookBackdrop.hidden = true;
+                    }
+                }, 300);
+            }
+        }
+
+        function toggleWordbook() {
+            if (wordbookDrawer && wordbookDrawer.classList.contains('is-open')) {
+                closeWordbook();
+            } else {
+                openWordbook();
+            }
+        }
+
+        /** -------------------------------------------------
+         *  渲染列表
+         * ------------------------------------------------- */
+
+        function updateWordbookCount() {
+            if (!wordbookCount) return;
+            const total = loadWordBook().length;
+            wordbookCount.textContent = total > 99 ? '99+' : String(total);
+            wordbookCount.hidden = total === 0;
+        }
+
+        function renderWordbook() {
+            if (!wordbookList) return;
+            const keyword = (wordbookSearch ? wordbookSearch.value : '').trim().toLowerCase();
+            const all = loadWordBook();
+            const items = keyword
+                ? all.filter(
+                    (item) =>
+                        item.word.includes(keyword) ||
+                        item.sentence.toLowerCase().includes(keyword) ||
+                        item.translation.toLowerCase().includes(keyword)
+                )
+                : all;
+
+            wordbookList.innerHTML = '';
+            updateWordbookCount();
+
+            if (!items.length) {
+                if (wordbookEmpty) {
+                    wordbookEmpty.style.display = '';
+                    wordbookEmpty.innerHTML = keyword
+                        ? '没有匹配的生词。'
+                        : '还没有生词。<br>在课文中用鼠标划选一个英文单词，点击「加入错题本」。';
+                }
+                return;
+            }
+            if (wordbookEmpty) {
+                wordbookEmpty.style.display = 'none';
+            }
+
+            const fragment = document.createDocumentFragment();
+            items.forEach((item) => {
+                fragment.appendChild(createWordCard(item));
+            });
+            wordbookList.appendChild(fragment);
+        }
+
+        /**
+         * 构建单张生词卡片。全部使用 textContent 写入，杜绝 HTML 注入。
+         * @param {Object} item 生词条目。
+         * @returns {HTMLElement} 卡片元素。
+         */
+        function createWordCard(item) {
+            const card = document.createElement('div');
+            card.className = 'wordbook-card';
+            card.dataset.word = item.word;
+            card.setAttribute('role', 'listitem');
+            if (item.mastered) {
+                card.classList.add('is-mastered');
+            }
+
+            const head = document.createElement('div');
+            head.className = 'wordbook-card__head';
+
+            const wordEl = document.createElement('span');
+            wordEl.className = 'wordbook-card__word';
+            wordEl.textContent = item.word;
+            wordEl.title = '点击朗读';
+
+            const speakBtn = document.createElement('button');
+            speakBtn.type = 'button';
+            speakBtn.className = 'wordbook-card__speak';
+            speakBtn.textContent = '🔊';
+            speakBtn.setAttribute('aria-label', `朗读 ${item.word}`);
+            speakBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                handleSpeak(item.word, speakBtn);
+            });
+
+            head.append(wordEl, speakBtn);
+            card.appendChild(head);
+
+            if (item.sentence) {
+                const sentenceEl = document.createElement('p');
+                sentenceEl.className = 'wordbook-card__sentence';
+                sentenceEl.textContent = item.sentence;
+                card.appendChild(sentenceEl);
+            }
+
+            if (item.translation) {
+                const translationEl = document.createElement('p');
+                translationEl.className = 'wordbook-card__translation';
+                translationEl.textContent = item.translation;
+                card.appendChild(translationEl);
+            }
+
+            if (item.lesson) {
+                const metaEl = document.createElement('p');
+                metaEl.className = 'wordbook-card__meta';
+                const parts = [];
+                if (item.book) parts.push(item.book);
+                parts.push(item.lesson);
+                if (item.reviewCount > 0) parts.push(`复习 ${item.reviewCount} 次`);
+                metaEl.textContent = parts.join(' · ');
+                card.appendChild(metaEl);
+            }
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'wordbook-card__remove';
+            removeBtn.textContent = '×';
+            removeBtn.setAttribute('aria-label', `移除 ${item.word}`);
+            removeBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                removeWordFromBook(item.word);
+                renderWordbook();
+            });
+            card.appendChild(removeBtn);
+
+            // 点击卡片：朗读 + 累加复习次数
+            card.addEventListener('click', () => {
+                if (wordbookAutoplay && wordbookAutoplay.checked) {
+                    handleSpeak(item.word);
+                }
+                updateWordInBook(item.word, { reviewCount: item.reviewCount + 1 });
+                const metaEl = card.querySelector('.wordbook-card__meta');
+                if (metaEl) {
+                    const parts = [];
+                    if (item.book) parts.push(item.book);
+                    if (item.lesson) parts.push(item.lesson);
+                    parts.push(`复习 ${item.reviewCount + 1} 次`);
+                    metaEl.textContent = parts.join(' · ');
+                }
+                item.reviewCount += 1;
+            });
+
+            return card;
+        }
+
+        /**
+         * 朗读并给出视觉反馈。
+         * @param {string} word 单词。
+         * @param {HTMLElement} [btn] 触发按钮，用于临时禁用。
+         */
+        function handleSpeak(word, btn) {
+            if (!canSpeak()) {
+                return false;
+            }
+            const ok = speakWord(word);
+            if (ok && btn) {
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.disabled = false;
+                }, 600);
+            }
+            return ok;
+        }
+
+        /** -------------------------------------------------
+         *  划词捕获
+         * ------------------------------------------------- */
+
+        /**
+         * 判断选区是否落在课文区域内，并返回所在句子与单词。
+         * @returns {Object|null} 上下文对象。
+         */
+        function readSelection() {
+            const selection = window.getSelection();
+            if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+                return null;
+            }
+            const raw = selection.toString().trim();
+            if (!raw) {
+                return null;
+            }
+            const word = normalizeWord(raw);
+            if (!word) {
+                return null;
+            }
+
+            const range = selection.getRangeAt(0);
+            // 选区必须位于课文内容区内
+            if (!content.contains(range.commonAncestorContainer)) {
+                return null;
+            }
+            const sentenceEl = (range.startContainer.nodeType === 1
+                ? range.startContainer
+                : range.startContainer.parentElement
+            )?.closest('.sentence');
+            if (!sentenceEl) {
+                return null;
+            }
+            const idx = Number(sentenceEl.dataset.idx);
+            const sentenceData = state.data[idx];
+            if (!sentenceData) {
+                return null;
+            }
+
+            // 计算浮层位置：优先选区上方，空间不足则置于下方
+            const rect = range.getBoundingClientRect();
+            return {
+                word,
+                sentence: sentenceData.en,
+                translation: sentenceData.cn,
+                rect
+            };
+        }
+
+        function hideWordPopover() {
+            if (!wordPopover) return;
+            wordPopover.classList.remove('is-visible');
+            wordPopover.setAttribute('aria-hidden', 'true');
+            pendingSelection = null;
+        }
+
+        function showWordPopover(context) {
+            if (!wordPopover || !context) return;
+            pendingSelection = context;
+
+            if (wordPopoverText) {
+                wordPopoverText.textContent = context.word;
+            }
+            if (wordPopoverHint) {
+                wordPopoverHint.textContent = '';
+            }
+            if (wordPopoverAdd) {
+                const exists = isWordInBook(context.word);
+                wordPopoverAdd.disabled = exists;
+                wordPopoverAdd.textContent = exists ? '已在错题本' : '加入错题本';
+            }
+
+            wordPopover.classList.add('is-visible');
+            wordPopover.setAttribute('aria-hidden', 'false');
+
+            // 定位：先渲染再测量，避免尺寸为 0
+            const popoverRect = wordPopover.getBoundingClientRect();
+            const gap = 10;
+            const viewportW = window.innerWidth;
+            const viewportH = window.innerHeight;
+
+            let left = context.rect.left + context.rect.width / 2 - popoverRect.width / 2;
+            left = Math.min(Math.max(left, 8), viewportW - popoverRect.width - 8);
+
+            let top = context.rect.top - popoverRect.height - gap;
+            if (top < 8) {
+                top = context.rect.bottom + gap;
+            }
+            top = Math.min(Math.max(top, 8), viewportH - popoverRect.height - 8);
+
+            wordPopover.style.left = `${Math.round(left)}px`;
+            wordPopover.style.top = `${Math.round(top)}px`;
+        }
+
+        // 划词结束后弹出浮层。使用 mouseup / touchend 而非 selectionchange，
+        // 因为后者在拖动过程中会高频触发。
+        function handleSelectionEnd(event) {
+            // 浮层内部的点击不应重新触发划词逻辑
+            if (wordPopover && event.target instanceof Node && wordPopover.contains(event.target)) {
+                return;
+            }
+            // 短暂延迟，让浏览器先完成选区更新
+            setTimeout(() => {
+                const context = readSelection();
+                if (context) {
+                    showWordPopover(context);
+                } else {
+                    hideWordPopover();
+                }
+            }, 10);
+        }
+
+        content.addEventListener('mouseup', handleSelectionEnd);
+        content.addEventListener('touchend', handleSelectionEnd);
+
+        // 点击空白处收起浮层（但保留选区，方便用户点「加入」）
+        document.addEventListener('mousedown', (event) => {
+            if (!wordPopover || !wordPopover.classList.contains('is-visible')) {
+                return;
+            }
+            if (wordPopover.contains(event.target)) {
+                return;
+            }
+            hideWordPopover();
+        });
+
+        if (wordPopoverAdd) {
+            wordPopoverAdd.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (!pendingSelection) return;
+                const { added } = addWordToBook({
+                    word: pendingSelection.word,
+                    sentence: pendingSelection.sentence,
+                    translation: pendingSelection.translation,
+                    book: isCustomLesson ? customBookName : defaultBookToken,
+                    lesson: isCustomLesson ? String(customLessonIndex + 1) : lessonSlug
+                });
+                updateWordbookCount();
+                if (wordPopoverAdd) {
+                    wordPopoverAdd.disabled = true;
+                    wordPopoverAdd.textContent = '已在错题本';
+                }
+                if (wordPopoverHint) {
+                    wordPopoverHint.textContent = added ? '已加入错题本' : '该单词已在错题本中';
+                }
+                if (wordbookDrawer && wordbookDrawer.classList.contains('is-open')) {
+                    renderWordbook();
+                }
+                // 收起选区，避免浮层残留
+                const selection = window.getSelection();
+                if (selection) {
+                    selection.removeAllRanges();
+                }
+                setTimeout(hideWordPopover, 900);
+            });
+        }
+
+        if (wordPopoverSpeak) {
+            wordPopoverSpeak.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (!pendingSelection) return;
+                const ok = handleSpeak(pendingSelection.word, wordPopoverSpeak);
+                if (wordPopoverHint) {
+                    wordPopoverHint.textContent = ok ? '' : '当前浏览器不支持语音合成';
+                }
+            });
+        }
+
+        /** -------------------------------------------------
+         *  事件绑定
+         * ------------------------------------------------- */
+
+        if (wordbookToggle) {
+            wordbookToggle.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                toggleWordbook();
+            });
+        }
+        if (wordbookClose) {
+            wordbookClose.addEventListener('click', closeWordbook);
+        }
+        if (wordbookBackdrop) {
+            wordbookBackdrop.addEventListener('click', closeWordbook);
+        }
+        if (wordbookSearch) {
+            wordbookSearch.addEventListener('input', renderWordbook);
+        }
+        if (wordbookClear) {
+            wordbookClear.addEventListener('click', () => {
+                if (!loadWordBook().length) {
+                    return;
+                }
+                if (window.confirm('确定要清空错题本吗？此操作不可撤销。')) {
+                    clearWordBook();
+                    renderWordbook();
+                }
+            });
+        }
+        if (wordbookAutoplay) {
+            // 默认开启自动发音
+            let saved = null;
+            try {
+                saved = localStorage.getItem(AUTOPLAY_KEY);
+            } catch (_) {
+                /* noop */
+            }
+            wordbookAutoplay.checked = saved === null ? true : saved === '1';
+            wordbookAutoplay.addEventListener('change', () => {
+                try {
+                    localStorage.setItem(AUTOPLAY_KEY, wordbookAutoplay.checked ? '1' : '0');
+                } catch (_) {
+                    /* noop */
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (wordPopover && wordPopover.classList.contains('is-visible')) {
+                    hideWordPopover();
+                    return;
+                }
+                if (wordbookDrawer && wordbookDrawer.classList.contains('is-open')) {
+                    closeWordbook();
+                }
+            }
+        });
+
+        // 语音列表在部分浏览器异步加载，提前触发一次以填充缓存
+        if (canSpeak()) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.addEventListener('voiceschanged', () => {
+                window.speechSynthesis.getVoices();
+            });
+        }
+
+        // 初始渲染计数
+        updateWordbookCount();
 
     })
 })();
