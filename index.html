@@ -108,6 +108,16 @@
         <a href="dictation.html" class="dictation-entry__btn">开始听写</a>
     </div>
 </div>
+<div class="book-container dictation-entry">
+    <div class="dictation-entry__body">
+        <div class="dictation-entry__text">
+            <h3>English Pod 播客精听</h3>
+            <p>按初级 / 中级 / 高级分级的英语播客，逐句点读、字幕对照，并附本课词汇。</p>
+            <p class="dictation-entry__count" id="podcast-entry-count"></p>
+        </div>
+        <a href="podcast.html" class="dictation-entry__btn">开始精听</a>
+    </div>
+</div>
 <div class="book-container">
     <div class="book-header">
         <h3>全四册课文导航</h3>
@@ -184,6 +194,16 @@
 </footer>
 <script src="static/particle-bg.js"></script>
 <script src="static/utils.js"></script>
+<script src="static/podcast-data.js"></script>
+<script>
+    (function () {
+        var el = document.getElementById('podcast-entry-count');
+        var cfg = window.NCE_PODCAST;
+        if (!el || !cfg) return;
+        var playable = (cfg.courses || []).filter(function (c) { return c.local !== false; }).length;
+        el.textContent = '共 ' + cfg.totalCount + ' 节 · 已上线 ' + playable + ' 节';
+    })();
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const historyContainer = document.getElementById('history-container');

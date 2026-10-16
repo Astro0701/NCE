@@ -1,2 +1,7 @@
 .DS_Store
 .idea/
+.workbuddy-ai/
+
+# 播客音频全量数据（仅抽样课程进仓库，其余放本地/对象存储）
+english-pod-data/
+podcast/audio/*.m4a.part

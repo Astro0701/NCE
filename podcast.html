@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="English Pod 英语播客精听，按初级、中级、高级分级，支持逐句点读、字幕对照与词汇学习。">
+    <meta name="keywords" content="英语播客,英语听力,English Pod,英语精听,英语点读">
+    <link rel="canonical" href="https://nce.hoothin.com/podcast.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:site_name" content="新概念英语在线点读">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="English Pod · 英语播客精听">
+    <meta property="og:description" content="按初级、中级、高级分级的英语播客精听，支持逐句点读、字幕对照与词汇学习。">
+    <meta property="og:url" content="https://nce.hoothin.com/podcast.html">
+    <meta property="og:image" content="https://nce.hoothin.com/static/ogimage.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="English Pod 英语播客精听界面">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="English Pod · 英语播客精听">
+    <meta name="twitter:description" content="按初级、中级、高级分级的英语播客精听，支持逐句点读、字幕对照与词汇学习。">
+    <meta name="twitter:image" content="https://nce.hoothin.com/static/ogimage.jpg">
+    <meta name="theme-color" content="#e8e8e8">
+    <title>English Pod - 英语播客精听</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/base.css">
+    <link rel="stylesheet" href="static/podcast.css">
+    <script src="static/podcast-data.js"></script>
+    <script src="static/podcast.js"></script>
+</head>
+<body>
+<div class="container">
+    <a href="index.html">
+        <div class="header">
+            <h1>English Pod</h1>
+            <p>听懂，再进一步</p>
+        </div>
+    </a>
+</div>
+
+<div class="book-container">
+    <div class="podcast-toolbar">
+        <div class="podcast-tabs" id="podcast-tabs" role="tablist">
+            <button type="button" data-level="全部" class="active" role="tab">全部</button>
+            <button type="button" data-level="初级" role="tab">初级</button>
+            <button type="button" data-level="中级" role="tab">中级</button>
+            <button type="button" data-level="高级" role="tab">高级</button>
+        </div>
+        <input id="podcast-search" class="podcast-search" type="search"
+               placeholder="搜索课程标题…" aria-label="搜索课程标题">
+    </div>
+    <p class="podcast-summary" id="podcast-summary"></p>
+    <hr>
+    <div class="podcast-list" id="podcast-list" role="list"></div>
+    <p class="podcast-empty" id="podcast-empty" hidden>没有匹配的课程，换个关键词试试。</p>
+</div>
+
+<footer>
+    <hr>
+    <p>© 2025 <a target="_blank" href="https://www.hoothin.com">hoothin</a>.</p>
+</footer>
+</body>
+</html>

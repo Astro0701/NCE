@@ -45,6 +45,14 @@
         const hashParts = hashSegment.split('/');
         const bookToken = hashParts[0] || '';
         const isCustomLesson = bookToken === 'CUSTOM';
+        /** 播客路由：lesson.html#PODCAST/{courseId} */
+        const isPodcastLesson = bookToken === 'PODCAST';
+        const podcastConfig = window.NCE_PODCAST || null;
+        const podcastCourses = (podcastConfig && Array.isArray(podcastConfig.courses))
+            ? podcastConfig.courses
+            : [];
+        /** 当前播客课程（含标题/等级/词汇），非播客路由时为 null */
+        let currentPodcastCourse = null;
         let customLessonsMap = {};
 
         function refreshCustomLessonsMap() {
@@ -86,6 +94,21 @@
             bookImgSrc = customBookCover || createPlaceholderCover(customBookDisplayName);
             fallbackAlbum = customBookDisplayName;
             fallbackTitle = currentLessonMeta.title || '';
+        } else if (isPodcastLesson) {
+            const podcastId = hashParts[1] ? decodeURIComponent(hashParts[1]) : '';
+            currentPodcastCourse = podcastCourses.find((item) => item.id === podcastId) || null;
+            if (!currentPodcastCourse) {
+                window.location.href = 'podcast.html';
+                return;
+            }
+            const audioBase = (podcastConfig && podcastConfig.audioBase) || 'podcast/audio/';
+            const lrcBase = (podcastConfig && podcastConfig.lrcBase) || 'podcast/lrc/';
+            mp3Src = `${audioBase}${podcastId}.m4a`;
+            lrcSrc = `${lrcBase}${podcastId}.lrc`;
+            bookScr = 'podcast.html';
+            bookImgSrc = 'images/podcast.svg';
+            fallbackAlbum = `English Pod · ${currentPodcastCourse.level || ''}`.trim();
+            fallbackTitle = currentPodcastCourse.title || podcastId;
         } else {
             defaultBookToken = bookToken || 'NCE1';
             defaultBookNumber = parseInt(defaultBookToken.replace('NCE', ''), 10);
@@ -1656,6 +1679,75 @@
             // LRC loaded successfully
         });
 
+        /** -------------------------------------------------
+         *  播客词汇表（仅 #PODCAST/... 路由）
+         * ------------------------------------------------- */
+        const podcastVocabEl = document.getElementById('podcast-vocab');
+
+        function renderPodcastVocab(list) {
+            if (!podcastVocabEl) {
+                return;
+            }
+            const items = list.map((item, i) => `
+                <div class="podcast-vocab__item" data-idx="${i}">
+                    <div class="podcast-vocab__head">
+                        <span class="podcast-vocab__term">${escapeHtml(item.term)}</span>
+                        <button type="button" class="podcast-vocab__add" data-word="${escapeHtml(item.term)}"
+                                title="加入错题本">+</button>
+                    </div>
+                    <p class="podcast-vocab__def">${escapeHtml(item.definition)}</p>
+                </div>`).join('');
+
+            podcastVocabEl.innerHTML = `
+                <h3 class="podcast-vocab__heading">
+                    本课词汇 <span class="podcast-vocab__count">${list.length}</span>
+                </h3>
+                <hr>
+                <div class="podcast-vocab__grid">${items}</div>`;
+            podcastVocabEl.hidden = false;
+
+            podcastVocabEl.querySelectorAll('.podcast-vocab__term').forEach((el) => {
+                el.addEventListener('click', () => speakWord(el.textContent));
+            });
+            podcastVocabEl.querySelectorAll('.podcast-vocab__add').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const word = btn.dataset.word || '';
+                    addWordToBook({
+                        word,
+                        sentence: '',
+                        translation: '',
+                        book: 'English Pod',
+                        lesson: currentPodcastCourse ? currentPodcastCourse.title : ''
+                    });
+                    updateWordbookCount();
+                    btn.classList.add('is-added');
+                    btn.textContent = '✓';
+                });
+            });
+        }
+
+        async function loadPodcastVocabulary() {
+            if (!isPodcastLesson || !podcastVocabEl || !currentPodcastCourse) {
+                return;
+            }
+            try {
+                const res = await fetch('podcast/vocabulary.json');
+                if (!res.ok) {
+                    return;
+                }
+                const all = await res.json();
+                const list = Array.isArray(all[currentPodcastCourse.id]) ? all[currentPodcastCourse.id] : [];
+                if (list.length) {
+                    renderPodcastVocab(list);
+                }
+            } catch (error) {
+                console.error('Failed to load podcast vocabulary:', error);
+            }
+        }
+
+        loadPodcastVocabulary();
+
         // Lesson navigation functionality
         const prevLessonBtn = document.getElementById('prev-lesson');
         const nextLessonBtn = document.getElementById('next-lesson');
@@ -1664,6 +1756,11 @@
 
         // Load lessons data
         async function loadLessonsData() {
+            if (isPodcastLesson) {
+                // 播客课程列表来自 window.NCE_PODCAST，无需再拉 data.json
+                updateNavigationButtons();
+                return;
+            }
             try {
                 const dataRes = await fetch('static/data.json');
                 defaultLessonsMap = await dataRes.json();
@@ -1677,6 +1774,14 @@
         }
 
         // Update navigation buttons state
+        /** 播客的「同等级课程」列表，用于上一课/下一课串联 */
+        function getPodcastSiblings() {
+            if (!currentPodcastCourse) {
+                return [];
+            }
+            return podcastCourses.filter((item) => item.level === currentPodcastCourse.level);
+        }
+
         function updateNavigationButtons() {
             if (!prevLessonBtn || !nextLessonBtn) {
                 return;
@@ -1686,6 +1791,12 @@
                 const lessons = Array.isArray(customLessonsMap[customBookName]) ? customLessonsMap[customBookName] : [];
                 prevLessonBtn.disabled = customLessonIndex <= 0;
                 nextLessonBtn.disabled = customLessonIndex >= lessons.length - 1;
+            } else if (isPodcastLesson) {
+                const siblings = getPodcastSiblings();
+                const idx = siblings.findIndex((item) => item.id === currentPodcastCourse.id);
+                currentLessonIndex = idx;
+                prevLessonBtn.disabled = idx <= 0;
+                nextLessonBtn.disabled = idx === -1 || idx >= siblings.length - 1;
             } else {
                 const lessons = defaultLessonsMap[String(defaultBookNumber)] || [];
                 const index = lessons.findIndex((lesson) => lesson.filename === lessonSlug);
@@ -1708,6 +1819,16 @@
                             window.location.href = `lesson.html#CUSTOM/${encodeURIComponent(customBookName)}/${customLessonIndex - 1}`;
                             window.location.reload();
                         }
+                    }
+                    return;
+                }
+
+                if (isPodcastLesson) {
+                    const siblings = getPodcastSiblings();
+                    const target = currentLessonIndex > 0 ? siblings[currentLessonIndex - 1] : null;
+                    if (target) {
+                        window.location.href = `lesson.html#PODCAST/${encodeURIComponent(target.id)}`;
+                        window.location.reload();
                     }
                     return;
                 }
@@ -1736,6 +1857,18 @@
                             window.location.href = `lesson.html#CUSTOM/${encodeURIComponent(customBookName)}/${customLessonIndex + 1}`;
                             window.location.reload();
                         }
+                    }
+                    return;
+                }
+
+                if (isPodcastLesson) {
+                    const siblings = getPodcastSiblings();
+                    const target = (currentLessonIndex > -1 && currentLessonIndex < siblings.length - 1)
+                        ? siblings[currentLessonIndex + 1]
+                        : null;
+                    if (target) {
+                        window.location.href = `lesson.html#PODCAST/${encodeURIComponent(target.id)}`;
+                        window.location.reload();
                     }
                     return;
                 }
