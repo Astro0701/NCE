@@ -344,12 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
             displayModesContainer.style.display = displayModesEnabled ? '' : 'none';
         }
         if (!displayModesEnabled) {
+            // 只做视觉切换，不再写入偏好。无中文时按钮是隐藏的、用户无从选择，
+            // 此时把 en-mode 存下来会污染后续「有中文」的课程，导致它们也只显示英文。
             applyDisplayMode('en-mode');
-            try {
-                localStorage.setItem('displayMode', 'en-mode');
-            } catch (_) {
-                /* noop */
-            }
         }
     }
 
@@ -370,6 +367,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const detail = event?.detail || {};
         setDisplayModesAvailability(!!detail.hasTranslation);
     });
+
+    // 一次性迁移：旧版本在「无中文」时会把 en-mode 写进 displayMode，
+    // 污染后续有中文的课程。这里清掉一次，之后恢复默认中英显示。
+    try {
+        if (localStorage.getItem('nceDisplayModeMigrated') !== '1') {
+            if (localStorage.getItem('displayMode') === 'en-mode') {
+                localStorage.removeItem('displayMode');
+            }
+            localStorage.setItem('nceDisplayModeMigrated', '1');
+        }
+    } catch (_) {
+        /* noop */
+    }
 
     // Load saved display mode
     const savedDisplayMode = localStorage.getItem('displayMode') || 'bilingual-mode';

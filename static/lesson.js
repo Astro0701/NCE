@@ -679,11 +679,8 @@
                     displayModesContainer.style.display = 'none';
                     content.classList.remove('bilingual-mode', 'cn-mode');
                     content.classList.add('en-mode');
-                    try {
-                        localStorage.setItem('displayMode', 'en-mode');
-                    } catch (_) {
-                        /* noop */
-                    }
+                    // 注意：不写 localStorage。无中文时用户无法选择显示模式，
+                    // 强行保存 en-mode 会让之后「有中文」的课程也只显示英文。
                 }
             }
             document.dispatchEvent(new CustomEvent(DISPLAY_MODE_EVENT, {
