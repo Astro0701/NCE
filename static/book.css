@@ -1,3 +1,7 @@
+/* ============================================================
+   课本导航页样式
+   ============================================================ */
+
 .book-container {
     display: none;
 }
@@ -13,24 +17,25 @@
     right: 18px;
     bottom: 18px;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.02);
+    color: rgba(0, 0, 0, 0.04);
     letter-spacing: 0.4px;
     pointer-events: none;
     user-select: none;
 }
 
-/* Navigation buttons in book-header */
+/* 册切换按钮 */
 .book-header .nav-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     padding: 0;
-    background: var(--container-highlight);
-    color: var(--text-color);
-    border: 1px solid transparent;
+    background-color: var(--container-bg);
+    color: var(--text-color-dark);
+    border: none;
     border-radius: 50%;
+    box-shadow: var(--shadow-flat-sm);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
@@ -43,10 +48,9 @@
 }
 
 .book-header .nav-btn:hover:not(:disabled) {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.4);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-flat);
+    transform: scale(1.06);
 }
 
 .book-header #prev-book:hover:not(:disabled) svg {
@@ -58,12 +62,72 @@
 }
 
 .book-header .nav-btn:active:not(:disabled) {
+    box-shadow: var(--shadow-pressed-sm);
     transform: scale(1.0);
 }
 
 .book-header .nav-btn:disabled {
-    opacity: 0.2;
+    opacity: 0.35;
     cursor: not-allowed;
+    box-shadow: none;
+    background-color: #e2e2e2;
+}
+
+/* 课文列表 */
+.lessons-grid {
+    margin: 15px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.lesson-item {
+    display: block;
+    padding: 16px 20px;
+    background-color: var(--container-bg);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text-color-dark);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-flat-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.lesson-item:hover {
+    transform: translateY(-4px);
+    color: var(--text-color);
+    box-shadow: var(--shadow-flat);
+}
+
+.lesson-item:hover .lesson-title {
+    color: var(--primary-color);
+}
+
+.lesson-item:active {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-pressed-sm);
+}
+
+.lesson-item.last-read {
+    background-color: var(--primary-soft);
+    box-shadow: inset -2px -2px 6px rgba(255, 255, 255, 0.7),
+                inset 2px 2px 6px rgba(22, 163, 74, 0.18);
+}
+
+.lesson-item.last-read .lesson-number {
+    color: var(--primary-color);
+}
+
+.lesson-number {
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-right: 10px;
+}
+
+.lesson-title {
+    font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 @media (max-width: 768px) {
@@ -72,8 +136,8 @@
     }
 
     .book-header .nav-btn {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
     }
 
     .book-header .nav-btn svg {
@@ -84,84 +148,9 @@
     .book-header img {
         max-width: 60px;
     }
-}
 
-.lessons-grid {
-    margin: 15px 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 15px;
-}
-
-.lesson-item {
-    display: block;
-    padding: 15px 20px;
-    background: var(--container-highlight);
-    border-radius: 8px;
-    text-decoration: none;
-    color: var(--text-color-dark);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.lesson-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), #1ed760);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.lesson-item:hover::before {
-    width: 100%;
-}
-
-.lesson-item:hover {
-    transform: translateY(-4px) scale(1.01);
-    background: linear-gradient(135deg, #333 0%, #3a3a3a 100%);
-    color: var(--text-color);
-    border-color: var(--primary-color);
-    box-shadow: 0 8px 20px rgba(29, 185, 84, 0.15),
-                0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.lesson-item:active {
-    transform: translateY(-2px) scale(1.0);
-}
-
-.lesson-item.last-read {
-    background: linear-gradient(135deg, rgba(29, 185, 84, 0.15) 0%, rgba(29, 185, 84, 0.05) 100%);
-    border-color: var(--primary-color);
-    box-shadow: 0 0 15px rgba(29, 185, 84, 0.3);
-}
-
-.lesson-item.last-read::before {
-    width: 100%;
-}
-
-.lesson-item.last-read .lesson-number {
-    color: var(--primary-color);
-}
-
-.lesson-number {
-    font-weight: 700;
-    color: var(--text-color);
-    margin-right: 10px;
-}
-
-.lesson-title {
-    font-weight: 500;
-}
-
-@media (max-width: 768px) {
     .lessons-grid {
         grid-template-columns: 1fr;
         gap: 10px;
     }
-
 }

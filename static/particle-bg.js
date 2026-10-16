@@ -1,6 +1,6 @@
 /**
- * 荧光粒子背景效果
- * 创建动态的荧光点悬浮背景
+ * 柔和粒子背景效果（浅色主题）
+ * 在浅灰底上绘制柔和的粉彩光斑，保持新拟态界面的干净质感
  */
 
 class ParticleBackground {
@@ -13,64 +13,26 @@ class ParticleBackground {
 
         this.ctx = this.canvas.getContext('2d');
         this.particles = [];
-        this.particleCount = 15; // 进一步减少粒子数量
+        this.particleCount = 12;
         this.mouse = { x: null, y: null, radius: 250 };
 
+        // 柔和粉彩色系（与 Soft UI 调色板一致）
         this.colorData = [
-            // 绿色系
-            { hex: '#1DB954', rgb: [29, 185, 84] },
-            { hex: '#1EFF50', rgb: [30, 255, 80] },
-            { hex: '#00FFB3', rgb: [0, 255, 179] },
-            { hex: '#3DFFB8', rgb: [61, 255, 184] },
-            { hex: '#7FFF00', rgb: [127, 255, 0] },
-            { hex: '#00FF7F', rgb: [0, 255, 127] },
-            { hex: '#20E8A0', rgb: [32, 232, 160] },
-            { hex: '#4FFFB0', rgb: [79, 255, 176] },
-            { hex: '#60FFC0', rgb: [96, 255, 192] },
-            { hex: '#32CD32', rgb: [50, 205, 50] },
-            // 青色系
-            { hex: '#00F5FF', rgb: [0, 245, 255] },
-            { hex: '#00CED1', rgb: [0, 206, 209] },
-            { hex: '#40E0D0', rgb: [64, 224, 208] },
-            { hex: '#48D1CC', rgb: [72, 209, 204] },
-            { hex: '#7FFFD4', rgb: [127, 255, 212] },
-            { hex: '#AFEEEE', rgb: [175, 238, 238] },
-            { hex: '#00FFFF', rgb: [0, 255, 255] },
-            // 蓝色系
-            { hex: '#1E90FF', rgb: [30, 144, 255] },
-            { hex: '#00BFFF', rgb: [0, 191, 255] },
-            { hex: '#87CEEB', rgb: [135, 206, 235] },
-            { hex: '#87CEFA', rgb: [135, 206, 250] },
-            { hex: '#4169E1', rgb: [65, 105, 225] },
-            { hex: '#6495ED', rgb: [100, 149, 237] },
-            // 紫色系
-            { hex: '#9370DB', rgb: [147, 112, 219] },
-            { hex: '#8A2BE2', rgb: [138, 43, 226] },
-            { hex: '#9400D3', rgb: [148, 0, 211] },
-            { hex: '#BA55D3', rgb: [186, 85, 211] },
-            { hex: '#DA70D6', rgb: [218, 112, 214] },
-            { hex: '#EE82EE', rgb: [238, 130, 238] },
-            { hex: '#DDA0DD', rgb: [221, 160, 221] },
-            // 粉色系
-            { hex: '#FF69B4', rgb: [255, 105, 180] },
-            { hex: '#FF1493', rgb: [255, 20, 147] },
-            { hex: '#FF6EC7', rgb: [255, 110, 199] },
-            { hex: '#FFB6C1', rgb: [255, 182, 193] },
-            // 橙色系
-            { hex: '#FF8C00', rgb: [255, 140, 0] },
-            { hex: '#FFA500', rgb: [255, 165, 0] },
-            { hex: '#FF7F50', rgb: [255, 127, 80] },
-            { hex: '#FFB347', rgb: [255, 179, 71] },
-            // 黄色系
-            { hex: '#FFD700', rgb: [255, 215, 0] },
-            { hex: '#FFFF00', rgb: [255, 255, 0] },
-            { hex: '#F0E68C', rgb: [240, 230, 140] },
-            { hex: '#FFFFE0', rgb: [255, 255, 224] },
-            // 红色系
-            { hex: '#FF4500', rgb: [255, 69, 0] },
-            { hex: '#FF6347', rgb: [255, 99, 71] },
-            { hex: '#FF0000', rgb: [255, 0, 0] },
-            { hex: '#DC143C', rgb: [220, 20, 60] }
+            // 柔和蓝色系
+            { hex: '#B4D3F0', rgb: [180, 211, 240] },
+            { hex: '#C8E0F4', rgb: [200, 224, 244] },
+            { hex: '#A9C7E8', rgb: [169, 199, 232] },
+            // 柔和薄荷系
+            { hex: '#BFE8D9', rgb: [191, 232, 217] },
+            { hex: '#D4F5E9', rgb: [212, 245, 233] },
+            // 柔和粉色系
+            { hex: '#F2CBDD', rgb: [242, 203, 221] },
+            { hex: '#F5E0E8', rgb: [245, 224, 232] },
+            // 柔和紫色系
+            { hex: '#D9CDF2', rgb: [217, 205, 242] },
+            { hex: '#E4DCF5', rgb: [228, 220, 245] },
+            // 柔和蜜桃系
+            { hex: '#F5DFC8', rgb: [245, 223, 200] }
         ];
 
         // 性能监控
@@ -181,11 +143,11 @@ class ParticleBackground {
                 y: pos.y,
                 vx: (Math.random() - 0.5) * 0.3,
                 vy: (Math.random() - 0.5) * 0.3,
-                radius: Math.random() * 6 + 5,
-                colorData: colorData, // 存储颜色数据对象引用
+                radius: Math.random() * 10 + 10,
+                colorData: colorData,
                 hex: colorData.hex,
                 rgb: colorData.rgb,
-                pulseSpeed: Math.random() * 0.01 + 0.005,
+                pulseSpeed: Math.random() * 0.008 + 0.004,
                 pulsePhase: Math.random() * Math.PI * 2
             });
         }
@@ -194,82 +156,37 @@ class ParticleBackground {
     drawParticle(particle) {
         // 脉动效果
         particle.pulsePhase += particle.pulseSpeed;
-        const pulse = Math.sin(particle.pulsePhase) * 0.35 + 1;
+        const pulse = Math.sin(particle.pulsePhase) * 0.3 + 1;
         const currentRadius = particle.radius * pulse;
-        const opacity = Math.sin(particle.pulsePhase) * 0.25 + 0.7;
+        const opacity = Math.sin(particle.pulsePhase) * 0.15 + 0.5;
 
         const [r, g, b] = particle.rgb;
+        const glowRadius = currentRadius * 8;
 
         this.ctx.save();
 
-        // 添加模糊滤镜使光晕过渡更平滑
+        // 轻微模糊让光斑过渡更柔和
         if (!document.body.classList.contains('low-performance')) {
-            this.ctx.filter = 'blur(3px)';
+            this.ctx.filter = 'blur(4px)';
         }
 
-        // 外层超大光晕
-        const outerGlowGradient = this.ctx.createRadialGradient(
+        const gradient = this.ctx.createRadialGradient(
             particle.x, particle.y, 0,
-            particle.x, particle.y, currentRadius * 20
+            particle.x, particle.y, glowRadius
         );
-        const outerOpacity1 = opacity * 0.5;
-        const outerOpacity2 = opacity * 0.3;
-        const outerOpacity3 = opacity * 0.15;
-        outerGlowGradient.addColorStop(0, `rgba(${r},${g},${b},${outerOpacity1})`);
-        outerGlowGradient.addColorStop(0.2, `rgba(${r},${g},${b},${outerOpacity2})`);
-        outerGlowGradient.addColorStop(0.5, `rgba(${r},${g},${b},${outerOpacity3})`);
-        outerGlowGradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        gradient.addColorStop(0, `rgba(${r},${g},${b},${opacity})`);
+        gradient.addColorStop(0.45, `rgba(${r},${g},${b},${opacity * 0.5})`);
+        gradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
 
-        this.ctx.fillStyle = outerGlowGradient;
+        this.ctx.fillStyle = gradient;
         this.ctx.beginPath();
-        this.ctx.arc(particle.x, particle.y, currentRadius * 20, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        // 中层光晕
-        const midGlowGradient = this.ctx.createRadialGradient(
-            particle.x, particle.y, 0,
-            particle.x, particle.y, currentRadius * 10
-        );
-        const midOpacity1 = opacity * 0.8;
-        const midOpacity2 = opacity * 0.5;
-        midGlowGradient.addColorStop(0, `rgba(${r},${g},${b},${midOpacity1})`);
-        midGlowGradient.addColorStop(0.4, `rgba(${r},${g},${b},${midOpacity2})`);
-        midGlowGradient.addColorStop(1, `rgba(${r},${g},${b},0)`);
-
-        this.ctx.fillStyle = midGlowGradient;
-        this.ctx.beginPath();
-        this.ctx.arc(particle.x, particle.y, currentRadius * 10, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        this.ctx.filter = 'none';
-
-        // 核心发光体（只在性能足够时使用shadowBlur）
-        if (!document.body.classList.contains('low-performance')) {
-            this.ctx.shadowBlur = 25;
-            this.ctx.shadowColor = `rgba(${r},${g},${b},${opacity * 0.6})`;
-        }
-        this.ctx.globalAlpha = opacity * 0.7;
-        this.ctx.fillStyle = particle.hex;
-        this.ctx.beginPath();
-        this.ctx.arc(particle.x, particle.y, currentRadius * 1.5, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        // 超亮核心点
-        if (!document.body.classList.contains('low-performance')) {
-            this.ctx.shadowBlur = 15;
-        }
-        this.ctx.fillStyle = '#FFFFFF';
-        this.ctx.globalAlpha = opacity * 0.4;
-        this.ctx.beginPath();
-        this.ctx.arc(particle.x, particle.y, currentRadius * 0.3, 0, Math.PI * 2);
+        this.ctx.arc(particle.x, particle.y, glowRadius, 0, Math.PI * 2);
         this.ctx.fill();
 
         this.ctx.restore();
     }
 
     drawConnections() {
-        const isLowPerf = document.body.classList.contains('low-performance');
-
         for (let i = 0; i < this.particles.length; i++) {
             for (let j = i + 1; j < this.particles.length; j++) {
                 const dx = this.particles[i].x - this.particles[j].x;
@@ -277,35 +194,14 @@ class ParticleBackground {
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < 280) {
-                    const opacity = (1 - distance / 280) * 0.35;
-
-                    // 直接使用预计算的RGB值
-                    const rgb1 = this.particles[i].rgb;
-                    const rgb2 = this.particles[j].rgb;
-
-                    // 混合颜色（位运算优化）
-                    const r = (rgb1[0] + rgb2[0]) >> 1;
-                    const g = (rgb1[1] + rgb2[1]) >> 1;
-                    const b = (rgb1[2] + rgb2[2]) >> 1;
-
-                    this.ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
-                    this.ctx.lineWidth = 1.5;
-
-                    // 低性能模式下不使用shadowBlur
-                    if (!isLowPerf) {
-                        this.ctx.shadowBlur = 3;
-                        this.ctx.shadowColor = `rgba(${r},${g},${b},${opacity * 0.5})`;
-                    }
+                    const opacity = (1 - distance / 280) * 0.16;
+                    this.ctx.strokeStyle = `rgba(148, 163, 184, ${opacity})`;
+                    this.ctx.lineWidth = 1;
 
                     this.ctx.beginPath();
                     this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
                     this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
                     this.ctx.stroke();
-
-                    // 重置shadowBlur
-                    if (!isLowPerf) {
-                        this.ctx.shadowBlur = 0;
-                    }
                 }
             }
         }
@@ -323,7 +219,7 @@ class ParticleBackground {
         // 检测禁区并反弹
         const zone = this.isInExcludedZone(particle.x, particle.y);
         if (zone) {
-            const centerY = (zone.top + zone.bottom) * 0.5; // 优化乘法
+            const centerY = (zone.top + zone.bottom) * 0.5;
 
             if (particle.y < centerY) {
                 particle.vy = -Math.abs(particle.vy);
@@ -394,9 +290,9 @@ class ParticleBackground {
             const avgFps = sum / len;
             this.fps = avgFps;
 
-            // 如果平均FPS低于30，禁用backdrop-filter
+            // 如果平均FPS低于30，启用低性能模式
             if (avgFps < 30 && !document.body.classList.contains('low-performance')) {
-                console.warn(`检测到低性能（FPS: ${avgFps.toFixed(1)}），已禁用毛玻璃效果`);
+                console.warn(`检测到低性能（FPS: ${avgFps.toFixed(1)}），已简化背景效果`);
                 document.body.classList.add('low-performance');
             }
 
@@ -410,8 +306,8 @@ class ParticleBackground {
         // 性能检测
         this.checkPerformance();
 
-        // 完全清空画布
-        this.ctx.fillStyle = '#121212';
+        // 完全清空画布（浅色底）
+        this.ctx.fillStyle = '#e8e8e8';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         // 绘制连接线

@@ -1822,6 +1822,10 @@
                 wordbookToggle.classList.add('is-open');
                 wordbookToggle.setAttribute('aria-expanded', 'true');
             }
+            // 抽屉打开时隐藏分享按钮，避免遮挡抽屉的关闭按钮
+            if (shareContainer) {
+                shareContainer.style.visibility = 'hidden';
+            }
             if (wordbookBackdrop && isMobileLayout()) {
                 wordbookBackdrop.hidden = false;
                 requestAnimationFrame(() => wordbookBackdrop.classList.add('is-visible'));
@@ -1835,6 +1839,9 @@
             if (wordbookToggle) {
                 wordbookToggle.classList.remove('is-open');
                 wordbookToggle.setAttribute('aria-expanded', 'false');
+            }
+            if (shareContainer) {
+                shareContainer.style.visibility = '';
             }
             if (wordbookBackdrop) {
                 wordbookBackdrop.classList.remove('is-visible');

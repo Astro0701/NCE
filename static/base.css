@@ -1,10 +1,43 @@
+/* ============================================================
+   新概念英语 · Neumorphism (Soft UI) 主题
+   参考：Soft UI 设计语言 —— 浅灰底、双向柔和阴影、大圆角
+   ============================================================ */
+
 :root {
-    --bg-color: #121212;
-    --primary-color: #1DB954;
-    --text-color: #E0E0E0;
-    --text-color-dark: #B3B3B3;
-    --container-bg: #181818;
-    --container-highlight: #282828;
+    /* 色彩 */
+    --bg-color: #e8e8e8;
+    --container-bg: #e8e8e8;
+    --container-highlight: #dcdcdc;
+    --primary-color: #16a34a;
+    --primary-bright: #1DB954;
+    --primary-soft: #d9f2e4;
+    --text-color: #374151;
+    --text-color-dark: #6b7280;
+    --text-faint: #9ca3af;
+    --heading-color: #1f2937;
+    --danger-color: #dc5a5a;
+    --highlight-bg-color: #d9f2e4;
+
+    /* 阴影 */
+    --shadow-light: #ffffff;
+    --shadow-dark: #d1d1d1;
+    --shadow-flat-sm: -3px -3px 8px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+    --shadow-flat: -5px -5px 14px var(--shadow-light), 5px 5px 14px var(--shadow-dark);
+    --shadow-flat-lg: -8px -8px 22px var(--shadow-light), 8px 8px 22px var(--shadow-dark);
+    --shadow-pressed-sm: inset -2px -2px 5px var(--shadow-light), inset 2px 2px 5px var(--shadow-dark);
+    --shadow-pressed: inset -3px -3px 7px var(--shadow-light), inset 3px 3px 7px var(--shadow-dark);
+    --convex-bg: linear-gradient(145deg, #fafafa, #d9d9d9);
+
+    /* 圆角与字体 */
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+
+    /* 布局 */
+    --player-height: 190px;
+    --wordbook-width: 360px;
 }
 
 * {
@@ -15,12 +48,37 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-stack);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     color: var(--text-color);
     background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+    background: rgba(22, 163, 74, 0.22);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cfcfcf;
+    border-radius: 999px;
+    border: 2px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #bdbdbd;
 }
 
 body::after {
@@ -28,7 +86,7 @@ body::after {
     position: fixed;
     right: 18px;
     bottom: 16px;
-    color: rgba(255, 255, 255, 0.02);
+    color: rgba(0, 0, 0, 0.04);
     font-size: 12px;
     letter-spacing: 0.4px;
     pointer-events: none;
@@ -42,57 +100,43 @@ hr {
     margin: 15px 0;
 }
 
+/* ---------- 页面标题卡片 ---------- */
+.container {
+    padding: 0 20px;
+}
+
 .container a {
     text-decoration: none;
     display: block;
 }
 
-.container a .header {
-    transition: all 0.3s ease;
-    border-radius: 15px;
-    position: relative;
-}
-
-.container a .header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-    transition: width 0.4s ease;
-}
-
-.container a .header:hover::before {
-    width: 80%;
-}
-
-.container a .header:hover {
-    background: rgba(29, 185, 84, 0.05);
-    transform: translateY(-2px);
-}
-
-.container a .header:hover h1 {
-    color: var(--primary-color);
-}
-
-.container a .header:hover p {
-    color: var(--text-color);
-}
-
 .header {
     text-align: center;
     color: var(--text-color);
-    padding: 40px 20px;
+    max-width: 760px;
+    margin: 28px auto 0;
+    padding: 36px 28px;
+    border-radius: var(--radius-lg);
+    background-color: var(--container-bg);
+    box-shadow: var(--shadow-flat);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container a .header:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-flat-lg);
 }
 
 .header h1 {
     font-size: 2.5em;
     font-weight: 700;
+    color: var(--heading-color);
     margin-bottom: 10px;
     transition: color 0.3s ease;
+}
+
+.container a .header:hover h1 {
+    color: var(--primary-color);
 }
 
 .header p {
@@ -101,16 +145,17 @@ hr {
     transition: color 0.3s ease;
 }
 
+/* ---------- 内容卡片 ---------- */
 .book-container {
     background-color: var(--container-bg);
-    border-radius: 15px;
+    border-radius: var(--radius-lg);
     flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 0;
-    margin: 0 20px;
-    padding: 20px;
-    border: 1px solid var(--container-highlight);
+    margin: 0 20px 24px;
+    padding: 24px;
+    box-shadow: var(--shadow-flat);
 }
 
 .book-header {
@@ -126,7 +171,8 @@ hr {
 
 .book-header img {
     max-width: 80px;
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-flat-sm);
 }
 
 .book-title {
@@ -134,51 +180,33 @@ hr {
     font-weight: bold;
 }
 
+.book-title h3 {
+    color: var(--heading-color);
+}
+
 .book-title p {
     font-size: 14px;
     color: var(--text-color-dark);
 }
 
+/* ---------- 推广位（保留基础样式） ---------- */
 .housetime-promo {
     position: relative;
     display: block;
-    min-height: 220px;
-    margin: 0 20px 20px;
+    min-height: 200px;
+    margin: 0 20px 24px;
     padding: 24px;
     color: var(--text-color);
-    border: 1px solid var(--container-highlight);
-    border-radius: 15px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    isolation: isolate;
-    background-color: rgba(24, 24, 24, 0.82);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
-    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.housetime-promo::before {
-    content: "";
-    position: absolute;
-    top: -45%;
-    right: -25%;
-    width: 70%;
-    height: 170%;
-    z-index: 1;
-    background: radial-gradient(circle at top right, rgba(29, 185, 84, 0.18), transparent 64%);
-    pointer-events: none;
+    background-color: var(--container-bg);
+    box-shadow: var(--shadow-flat);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .housetime-promo:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-color);
-    background-color: rgba(40, 40, 40, 0.8);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), 0 8px 20px rgba(29, 185, 84, 0.13);
-}
-
-.housetime-promo:hover .housetime-promo__image {
-    opacity: 0.48;
-    transform: scale(1.035);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-flat-lg);
 }
 
 .housetime-promo__image {
@@ -187,21 +215,7 @@ hr {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: right center;
-    opacity: 0.52;
-    transform: scale(1.01);
-    filter: saturate(0.96) brightness(0.92) contrast(1.02);
-    transition: opacity 0.3s ease, transform 0.45s ease;
-}
-
-.housetime-promo__shade {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background:
-        linear-gradient(90deg, rgba(24, 24, 24, 0.92) 0%, rgba(24, 24, 24, 0.76) 42%, rgba(24, 24, 24, 0.24) 74%, rgba(24, 24, 24, 0.12) 100%),
-        linear-gradient(180deg, rgba(18, 18, 18, 0.04), rgba(18, 18, 18, 0.38));
-    pointer-events: none;
+    opacity: 0.5;
 }
 
 .housetime-promo__content {
@@ -214,180 +228,72 @@ hr {
     gap: 10px;
 }
 
-.housetime-promo__logo {
-    width: min(142px, 46vw);
-    max-height: 54px;
-    object-fit: contain;
-    object-position: left center;
-    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
-}
-
-.housetime-promo__eyebrow {
-    font-size: 0.82rem;
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: 0;
-    color: var(--primary-color);
-}
-
 .housetime-promo h2 {
-    max-width: 520px;
-    margin: 0;
-    font-size: 1.55rem;
-    line-height: 1.28;
-    letter-spacing: 0;
-    color: var(--text-color);
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    font-size: 1.5rem;
+    color: var(--heading-color);
 }
 
 .housetime-promo p {
-    max-width: 500px;
-    margin: 0;
     font-size: 0.95rem;
-    line-height: 1.62;
+    line-height: 1.6;
     color: var(--text-color-dark);
-}
-
-.housetime-promo__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.housetime-promo__tags span {
-    padding: 5px 10px;
-    border: 1px solid rgba(29, 185, 84, 0.32);
-    border-radius: 999px;
-    background: rgba(29, 185, 84, 0.1);
-    color: var(--primary-color);
-    font-size: 0.78rem;
-    line-height: 1.2;
 }
 
 .housetime-promo__cta {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    margin-top: 4px;
     padding-bottom: 2px;
     color: var(--primary-color);
-    border-bottom: 1px solid rgba(29, 185, 84, 0.45);
+    border-bottom: 1px solid rgba(22, 163, 74, 0.45);
     font-size: 0.88rem;
     font-weight: 600;
-    line-height: 1.2;
 }
 
-.housetime-promo--compact {
-    min-height: 178px;
-    padding: 22px 24px;
-}
-
-.housetime-promo--compact .housetime-promo__content {
-    width: min(520px, 100%);
-    gap: 9px;
-}
-
-.housetime-promo--compact .housetime-promo__logo {
-    width: min(118px, 42vw);
-    max-height: 44px;
-}
-
-.housetime-promo--compact h2 {
-    max-width: 500px;
-    font-size: 1.2rem;
-}
-
-.housetime-promo--compact p {
-    max-width: 480px;
-    font-size: 0.92rem;
-    line-height: 1.55;
-}
-
-.housetime-promo--compact .housetime-promo__cta {
-    padding-bottom: 2px;
-}
-
+/* ---------- 页脚 ---------- */
 footer {
     padding: 20px;
     text-align: center;
-    color: var(--text-color-dark);
+    color: var(--text-faint);
     flex-shrink: 0;
 }
 
-footer > p, footer a {
-    font-size: 14px;
-    color: var(--text-color-dark);
-    transition: color 0.3s ease;
-}
-
+footer > p,
 footer a {
-    position: relative;
-    padding-bottom: 2px;
-}
-
-footer a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 1px;
-    background: var(--primary-color);
-    transition: width 0.3s ease;
+    font-size: 14px;
+    color: var(--text-faint);
+    transition: color 0.3s ease;
 }
 
 footer a:hover {
     color: var(--primary-color);
 }
 
-footer a:hover::after {
-    width: 100%;
-}
-
+/* ---------- 响应式 ---------- */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .header {
+        margin-top: 16px;
+        padding: 26px 18px;
+    }
+
     .header h1 {
         font-size: 2em;
     }
+
     .book-container {
-        margin: 0 10px;
-        padding: 15px;
+        margin: 0 10px 16px;
+        padding: 16px;
     }
+
     .housetime-promo {
-        min-height: 360px;
         margin: 0 10px 16px;
         padding: 20px;
     }
-    .housetime-promo__image {
-        object-position: center bottom;
-    }
-    .housetime-promo__shade {
-        background:
-            linear-gradient(180deg, rgba(10, 13, 18, 0.88) 0%, rgba(10, 13, 18, 0.68) 48%, rgba(10, 13, 18, 0.2) 100%),
-            linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.24));
-    }
-    .housetime-promo__content {
-        width: 100%;
-    }
-    .housetime-promo__logo {
-        width: 150px;
-        max-height: 56px;
-    }
-    .housetime-promo h2 {
-        font-size: 1.45rem;
-        line-height: 1.25;
-    }
-    .housetime-promo p {
-        font-size: 0.94rem;
-        line-height: 1.58;
-    }
-    .housetime-promo__cta {
-        width: auto;
-    }
-    .housetime-promo--compact {
-        min-height: 330px;
-        padding: 18px;
-    }
-    .housetime-promo--compact h2 {
-        font-size: 1.22rem;
+
+    footer {
+        padding: 12px 20px 14px;
     }
 }
