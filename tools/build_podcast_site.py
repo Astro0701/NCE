@@ -111,22 +111,54 @@ def main():
 
     # ---------- 抽样课程的字幕 / 音频 / 词汇 ----------
     vocab_out = {}
-    copied_lrc = copied_audio = 0
+    copied_lrc = copied_audio = translated = 0
     missing = []
+    i18n_dir = os.path.join(dest, "podcast", "i18n")
     for c in all_courses:
         cid = c["id"]
         if cid not in sample_set:
             continue
-        vocab = c.get("vocabulary") or []
-        if vocab:
+
+        # 词汇：优先用人工翻译文件里的中文释义，否则退回源站词汇
+        tr = None
+        tr_path = os.path.join(i18n_dir, f"{cid}.json")
+        if os.path.exists(tr_path):
+            try:
+                tr = json.load(open(tr_path, encoding="utf-8"))
+            except Exception as e:  # noqa: BLE001
+                print(f"      ! {cid} 译文文件解析失败：{e}")
+        if tr and tr.get("vocabulary"):
             vocab_out[cid] = [
                 {"term": v.get("term") or "", "definition": v.get("definition") or ""}
-                for v in vocab if v.get("term")
+                for v in tr["vocabulary"] if v.get("term")
             ]
+        else:
+            vocab = c.get("vocabulary") or []
+            if vocab:
+                vocab_out[cid] = [
+                    {"term": v.get("term") or "", "definition": v.get("definition") or ""}
+                    for v in vocab if v.get("term")
+                ]
+
+        # 字幕：英文原文 + 可选中文译文，写成 LRC 的 en|zh 形式
         s_lrc = os.path.join(src, "lrc", f"{cid}.lrc")
         if os.path.exists(s_lrc):
-            shutil.copy2(s_lrc, os.path.join(d_lrc, f"{cid}.lrc"))
+            lines = [l for l in open(s_lrc, encoding="utf-8").read().split("\n") if l.strip()]
+            zh = (tr or {}).get("cues") or []
+            if zh:
+                if len(zh) != len(lines):
+                    print(f"      ! {cid} 译文条数 {len(zh)} 与字幕行数 {len(lines)} 不符，已跳过译文")
+                else:
+                    merged = []
+                    for line, t in zip(lines, zh):
+                        t = t.replace("|", "／").replace("\n", " ").strip()
+                        merged.append(f"{line}|{t}" if t else line)
+                    lines = merged
+                    translated += 1
+            with open(os.path.join(d_lrc, f"{cid}.lrc"), "w", encoding="utf-8") as f:
+                f.write("\n".join(lines) + "\n")
             copied_lrc += 1
+
         s_audio = os.path.join(src, "audio", f"{cid}.m4a")
         if os.path.exists(s_audio) and os.path.getsize(s_audio) > 1024:
             shutil.copy2(s_audio, os.path.join(d_audio, f"{cid}.m4a"))
@@ -142,7 +174,8 @@ def main():
 
     total = sum(os.path.getsize(os.path.join(d_audio, f))
                 for f in os.listdir(d_audio) if f.endswith(".m4a"))
-    print(f"[3/3] 复制完成：字幕 {copied_lrc} 个 / 音频 {copied_audio} 个（{total / 1048576:.1f} MB）")
+    print(f"[3/3] 复制完成：字幕 {copied_lrc} 个（其中 {translated} 个含中文译文）"
+          f" / 音频 {copied_audio} 个（{total / 1048576:.1f} MB）")
     if missing:
         print(f"      ! 以下课程音频尚未下载完，已跳过：{', '.join(missing)}")
         print(f"        下载完成后重新运行本脚本即可补齐。")
