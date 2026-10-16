@@ -29,12 +29,9 @@ import os
 import shutil
 import sys
 
-# 默认抽样课程。当前只保留 advanced-18：
-# 全站 111 课里，它是唯一一节字幕时间轴完全对齐的（单句溢出 > 1.5s 的句子为 0），
-# 其余课程均有不同程度的「播放时重复」问题。详见 tools/analyze_podcast_timing.py。
-DEFAULT_SAMPLE = [
-    "advanced-18",
-]
+# 默认抽样课程。为空表示不再从源站抽样——源站数据目录（english-pod-data）
+# 已清理，全部课程都改为「仓库本地」管理，见 podcast/local-courses.json。
+DEFAULT_SAMPLE = []
 
 # 线上把音频迁到对象存储后，改这里（例如 'https://audio.example.com/'）
 DEFAULT_AUDIO_BASE = "podcast/audio/"
@@ -53,19 +50,30 @@ def main():
     src = os.path.abspath(args.source)
     dest = os.path.abspath(args.dest)
     index_path = os.path.join(src, "index.json")
-    if not os.path.exists(index_path):
-        sys.exit(f"找不到 {index_path}，请先运行 tools/fetch_english_pod.py")
 
-    with open(index_path, encoding="utf-8") as f:
-        all_courses = json.load(f)
-
+    # 源站数据是可选的：不抽样时（DEFAULT_SAMPLE 为空 / --sample none）
+    # 完全不需要 english-pod-data，仓库靠 local-courses.json 自足。
+    all_courses = []
     if args.all:
+        if not os.path.exists(index_path):
+            sys.exit(f"找不到 {index_path}，请先运行 tools/fetch_english_pod.py")
+        with open(index_path, encoding="utf-8") as f:
+            all_courses = json.load(f)
         sample = [c["id"] for c in all_courses]
     elif args.sample.strip().lower() in ("none", ""):
         sample = []
     else:
+        if not os.path.exists(index_path):
+            sys.exit(f"找不到 {index_path}，请先运行 tools/fetch_english_pod.py，"
+                     f"或把 --sample 设为 none 只用本地课程")
+        with open(index_path, encoding="utf-8") as f:
+            all_courses = json.load(f)
         sample = [s.strip() for s in args.sample.split(",") if s.strip()]
     sample_set = set(sample)
+    if sample_set:
+        print(f"      (从源站抽样 {len(sample_set)} 课，源目录：{src})")
+    else:
+        print(f"      (不使用源站数据，全部课程来自 podcast/local-courses.json)")
 
     d_lrc = os.path.join(dest, "podcast", "lrc")
     d_audio = os.path.join(dest, "podcast", "audio")
