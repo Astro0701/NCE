@@ -29,13 +29,10 @@ import os
 import shutil
 import sys
 
-# 默认抽样：每级 2 课，优先挑体积小的
+# 默认抽样课程。当前只保留 advanced-18：
+# 全站 111 课里，它是唯一一节字幕时间轴完全对齐的（单句溢出 > 1.5s 的句子为 0），
+# 其余课程均有不同程度的「播放时重复」问题。详见 tools/analyze_podcast_timing.py。
 DEFAULT_SAMPLE = [
-    "beginner-01",
-    "beginner-02",
-    "intermediate-13",
-    "intermediate-25",
-    "advanced-53",
     "advanced-18",
 ]
 
