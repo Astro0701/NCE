@@ -76,9 +76,9 @@ def fetch_json(url, timeout=30, retries=4):
     return json.loads(fetch(url, timeout=timeout, retries=retries).decode("utf-8"))
 
 
-def download_audio(course_id, dest, timeout=180, retries=4):
-    """下载音频，返回字节数。已存在且非空则跳过。"""
-    if os.path.exists(dest) and os.path.getsize(dest) > 1024:
+def download_audio(course_id, dest, timeout=180, retries=4, force=False):
+    """下载音频，返回 (字节数, 是否命中缓存)。已存在且非空则跳过（force=True 时强制重下）。"""
+    if not force and os.path.exists(dest) and os.path.getsize(dest) > 1024:
         return os.path.getsize(dest), True
     url = f"{BASE}/media/{course_id}?v=4"
     tmp = dest + ".part"
@@ -86,9 +86,16 @@ def download_audio(course_id, dest, timeout=180, retries=4):
     for attempt in range(retries):
         try:
             req = urllib.request.Request(url, headers=HEADERS)
-            with urllib.request.urlopen(req, timeout=timeout) as r, open(tmp, "wb") as f:
-                shutil.copyfileobj(r, f, length=1 << 16)
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                # 关键：记录服务端声明的长度。连接中途断开时 urllib 未必抛异常，
+                # 会静默写入半截文件，必须自己比对字节数。
+                declared = r.headers.get("Content-Length")
+                declared = int(declared) if declared and declared.isdigit() else None
+                with open(tmp, "wb") as f:
+                    shutil.copyfileobj(r, f, length=1 << 16)
             size = os.path.getsize(tmp)
+            if declared is not None and size != declared:
+                raise RuntimeError(f"字节数不符：收到 {size}，应为 {declared}")
             if size < 1024:
                 raise RuntimeError(f"文件过小 ({size} B)")
             os.replace(tmp, dest)
@@ -100,6 +107,21 @@ def download_audio(course_id, dest, timeout=180, retries=4):
             if attempt < retries - 1:
                 time.sleep(2 * (attempt + 1) + random.random())
     raise RuntimeError(f"下载失败 {course_id}: {last}")
+
+
+def remote_size(course_id, timeout=30, retries=3):
+    """查询服务端该音频的字节数，失败返回 -1。"""
+    url = f"{BASE}/media/{course_id}?v=4"
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers=HEADERS, method="HEAD")
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                val = r.headers.get("Content-Length")
+                return int(val) if val and val.isdigit() else -1
+        except Exception:  # noqa: BLE001
+            if attempt < retries - 1:
+                time.sleep(1.5 * (attempt + 1) + random.random())
+    return -1
 
 
 def cues_to_lrc(cues):
@@ -134,6 +156,8 @@ def main():
     ap.add_argument("--meta-only", action="store_true", help="只抓元数据，不下载音频")
     ap.add_argument("--audio-only", action="store_true", help="只下载音频")
     ap.add_argument("--no-lrc", action="store_true", help="不生成 LRC 文件")
+    ap.add_argument("--verify", action="store_true",
+                    help="逐个与服务器核对字节数，自动重下被截断的文件（较慢但可靠）")
     args = ap.parse_args()
 
     out = os.path.abspath(args.out)
@@ -228,9 +252,26 @@ def main():
     # ---------- 音频 ----------
     if not args.meta_only:
         log(f"[3/3] 下载音频（并发 {args.workers}）...")
-        jobs = [c for c in courses
-                if not (os.path.exists(os.path.join(d_audio, f"{c['id']}.m4a"))
-                        and os.path.getsize(os.path.join(d_audio, f"{c['id']}.m4a")) > 1024)]
+
+        def local_path(cid):
+            return os.path.join(d_audio, f"{cid}.m4a")
+
+        def usable(cid):
+            """本地文件是否存在且大小正确（--verify 时与服务器核对）。"""
+            p = local_path(cid)
+            if not (os.path.exists(p) and os.path.getsize(p) > 1024):
+                return False
+            if not args.verify:
+                return True
+            expected = remote_size(cid)
+            if expected <= 0:
+                # 查不到远端大小，保守起见保留本地文件
+                return True
+            return os.path.getsize(p) == expected
+
+        if args.verify:
+            log("      校验模式：逐个与服务器核对字节数（较慢）")
+        jobs = [c for c in courses if not usable(c["id"])]
         skipped = len(courses) - len(jobs)
         if skipped:
             log(f"      已存在 {skipped} 课，跳过")
@@ -239,7 +280,10 @@ def main():
         lock = threading.Lock()
 
         def job(c):
-            return c["id"], download_audio(c["id"], os.path.join(d_audio, f"{c['id']}.m4a"))
+            # verify 模式下命中的是「大小不符」的文件，需要强制重下
+            return c["id"], download_audio(
+                c["id"], os.path.join(d_audio, f"{c['id']}.m4a"), force=args.verify
+            )
 
         if jobs:
             with cf.ThreadPoolExecutor(max_workers=args.workers) as ex:
