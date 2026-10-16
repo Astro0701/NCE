@@ -60,6 +60,40 @@
     <a id="history-preview" class="history-preview" href="#"></a>
     <div id="history-list"></div>
 </div>
+<div class="book-container study-stats" id="study-stats">
+    <div class="study-stats__header">
+        <span class="study-stats__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 3"></path>
+            </svg>
+        </span>
+        <div class="study-stats__heading">
+            <h3>学习统计</h3>
+            <p class="study-stats__subtitle">点读与听写的每一分钟都被记录</p>
+        </div>
+    </div>
+    <hr class="study-stats__divider">
+    <div class="study-stats__grid">
+        <div class="study-stats__item">
+            <span class="study-stats__value" id="study-today-value">0 分钟</span>
+            <span class="study-stats__label">今日学习</span>
+            <span class="study-stats__detail" id="study-today-detail"></span>
+        </div>
+        <div class="study-stats__item">
+            <span class="study-stats__value" id="study-total-value">0 分钟</span>
+            <span class="study-stats__label">累计学习</span>
+            <span class="study-stats__detail" id="study-total-detail"></span>
+        </div>
+        <div class="study-stats__item">
+            <span class="study-stats__value" id="study-streak-value">0 天</span>
+            <span class="study-stats__label">连续学习</span>
+            <span class="study-stats__detail" id="study-streak-detail"></span>
+        </div>
+    </div>
+    <div class="study-stats__chart" id="study-chart" hidden></div>
+    <p class="study-stats__empty" id="study-empty">还没有学习记录，进入任意一课开始学习吧。</p>
+</div>
 <style>
     #particle-canvas {
         position: fixed;
@@ -576,6 +610,161 @@
     .settings-modal__close:hover {
         color: var(--text-color);
     }
+
+    /* 学习统计 */
+    .study-stats {
+        position: relative;
+        overflow: hidden;
+        flex: 0 0 auto;
+        margin-bottom: 20px;
+    }
+    .study-stats::before {
+        content: "";
+        position: absolute;
+        top: -45%;
+        right: -25%;
+        width: 70%;
+        height: 170%;
+        background: radial-gradient(circle at top right, rgba(29, 185, 84, 0.18), transparent 65%);
+        pointer-events: none;
+    }
+    .study-stats > * {
+        position: relative;
+    }
+    .study-stats__header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+    .study-stats__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(29, 185, 84, 0.35), rgba(29, 185, 84, 0.12));
+        box-shadow: 0 10px 24px rgba(29, 185, 84, 0.2);
+        color: var(--primary-color);
+        flex-shrink: 0;
+    }
+    .study-stats__icon svg {
+        width: 22px;
+        height: 22px;
+    }
+    .study-stats__heading h3 {
+        font-size: 1.25em;
+        font-weight: 600;
+        margin: 0;
+    }
+    .study-stats__subtitle {
+        margin-top: 4px;
+        font-size: 0.85em;
+        color: var(--text-color-dark);
+        letter-spacing: 0.3px;
+    }
+    .study-stats__divider {
+        border-top-color: rgba(255, 255, 255, 0.08);
+        margin: 14px 0 18px;
+    }
+    .study-stats__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .study-stats__item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        min-width: 0;
+    }
+    .study-stats__value {
+        font-size: 1.4em;
+        font-weight: 700;
+        color: var(--primary-color);
+        line-height: 1.2;
+    }
+    .study-stats__label {
+        font-size: 0.8em;
+        color: var(--text-color-dark);
+        letter-spacing: 0.4px;
+    }
+    .study-stats__detail {
+        font-size: 0.75em;
+        color: var(--text-color-dark);
+        opacity: 0.85;
+        min-height: 1.2em;
+    }
+    .study-stats__chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        padding: 6px 4px 2px;
+    }
+    .study-stats__bar-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+    .study-stats__bar-wrap {
+        width: 100%;
+        height: 56px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+    .study-stats__bar {
+        width: min(30px, 72%);
+        border-radius: 6px 6px 3px 3px;
+        background: linear-gradient(180deg, var(--primary-color), rgba(29, 185, 84, 0.45));
+        min-height: 3px;
+        transition: height 0.3s ease;
+    }
+    .study-stats__bar.is-empty {
+        background: rgba(255, 255, 255, 0.08);
+        height: 3px !important;
+    }
+    .study-stats__bar-label {
+        font-size: 0.72em;
+        color: var(--text-color-dark);
+    }
+    .study-stats__bar-col.is-today .study-stats__bar-label {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    .study-stats__empty {
+        font-size: 0.85em;
+        color: var(--text-color-dark);
+        text-align: center;
+        padding: 6px 0 2px;
+    }
+    @media (max-width: 768px) {
+        .study-stats__icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+        }
+        .study-stats__grid {
+            gap: 8px;
+        }
+        .study-stats__item {
+            padding: 10px 12px;
+        }
+        .study-stats__value {
+            font-size: 1.1em;
+        }
+        .study-stats__bar-wrap {
+            height: 44px;
+        }
+    }
 </style>
 <div class="book-container dictation-entry">
     <div class="dictation-entry__body">
@@ -1017,6 +1206,107 @@ document.addEventListener('DOMContentLoaded', () => {
     el.textContent = total > 0
         ? `题库已有 ${total} 句`
         : '还没有听过的句子，去点读页学习后即可开始';
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const utils = window.NCEUtils;
+    if (!utils || typeof utils.getStudyStats !== 'function' || typeof utils.formatStudyDuration !== 'function') {
+        return;
+    }
+    const moduleLabels = { lesson: '点读', dictation: '听写' };
+    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = text;
+        }
+    }
+
+    function renderStudyStats() {
+        const stats = utils.getStudyStats();
+
+        setText('study-today-value', utils.formatStudyDuration(stats.today));
+        setText('study-total-value', utils.formatStudyDuration(stats.total));
+        setText('study-streak-value', `${stats.streak} 天`);
+
+        // 今日学习的分项明细（点读 / 听写）
+        const todayParts = Object.keys(stats.todayByModule)
+            .filter((mod) => stats.todayByModule[mod] > 0)
+            .map((mod) => `${moduleLabels[mod] || mod} ${utils.formatStudyDuration(stats.todayByModule[mod])}`);
+        setText('study-today-detail', todayParts.join(' · '));
+
+        if (stats.studiedDays > 0) {
+            setText('study-total-detail', `已学习 ${stats.studiedDays} 天`);
+        }
+        if (stats.today > 0) {
+            setText('study-streak-detail', '今天已打卡');
+        } else if (stats.streak > 0) {
+            setText('study-streak-detail', '今天还没学习');
+        } else {
+            setText('study-streak-detail', '');
+        }
+
+        const chartEl = document.getElementById('study-chart');
+        const emptyEl = document.getElementById('study-empty');
+        if (!chartEl) {
+            return;
+        }
+        if (stats.total <= 0) {
+            chartEl.hidden = true;
+            chartEl.innerHTML = '';
+            if (emptyEl) {
+                emptyEl.hidden = false;
+            }
+            return;
+        }
+        if (emptyEl) {
+            emptyEl.hidden = true;
+        }
+
+        const max = Math.max(...stats.last7.map((day) => day.total), 1);
+        chartEl.innerHTML = '';
+        stats.last7.forEach((day, index) => {
+            const col = document.createElement('div');
+            col.className = 'study-stats__bar-col';
+            if (index === stats.last7.length - 1) {
+                col.classList.add('is-today');
+            }
+
+            const wrap = document.createElement('div');
+            wrap.className = 'study-stats__bar-wrap';
+            wrap.title = day.total > 0
+                ? `${day.date} · ${utils.formatStudyDuration(day.total)}`
+                : `${day.date} · 未学习`;
+
+            const bar = document.createElement('div');
+            bar.className = 'study-stats__bar';
+            if (day.total > 0) {
+                bar.style.height = `${Math.max((day.total / max) * 100, 8)}%`;
+            } else {
+                bar.classList.add('is-empty');
+            }
+
+            const label = document.createElement('span');
+            label.className = 'study-stats__bar-label';
+            label.textContent = weekdays[day.weekday] || '';
+
+            wrap.appendChild(bar);
+            col.append(wrap, label);
+            chartEl.appendChild(col);
+        });
+        chartEl.hidden = false;
+    }
+
+    renderStudyStats();
+
+    // 从点读/听写页切回首页时刷新数据
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            renderStudyStats();
+        }
+    });
 });
 </script>
 </body>

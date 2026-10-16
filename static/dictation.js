@@ -414,6 +414,18 @@
         }
 
         /** -------------------------------------------------
+         *  学习时长统计
+         *  仅在练习界面展示时计时，听音与输入都算学习状态。
+         * ------------------------------------------------- */
+        if (typeof utils.startStudyTimer === 'function') {
+            utils.startStudyTimer({
+                module: 'dictation',
+                isEnabled: () => !!(practiceEl && !practiceEl.hidden),
+                isEngaged: () => !!audio && !audio.paused && !audio.ended
+            });
+        }
+
+        /** -------------------------------------------------
          *  初始化
          * ------------------------------------------------- */
         function init() {

@@ -749,6 +749,348 @@
         return added;
     }
 
+    /** -------------------------------------------------
+     *  学习时长统计
+     *  仅在页面可见且用户活跃（或音频播放中）时累计，
+     *  按「天 + 模块」记录，数据保存在 localStorage。
+     * ------------------------------------------------- */
+
+    const STUDY_TIME_KEY = 'nceStudyTime';
+    const STUDY_TIME_VERSION = 1;
+    const STUDY_DAY_LIMIT = 400;
+
+    /**
+     * 本地时区日期键（YYYY-MM-DD）。
+     * 使用 Object.prototype.toString 判断日期，兼容跨 realm（iframe）传入的 Date。
+     * @param {Date} [date] 日期对象，默认当前时间。
+     * @returns {string} 日期键。
+     */
+    function getStudyDayKey(date) {
+        const isDate = date && Object.prototype.toString.call(date) === '[object Date]';
+        const d = isDate && !Number.isNaN(date.getTime()) ? date : new Date();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${d.getFullYear()}-${month}-${day}`;
+    }
+
+    function createEmptyStudyTime() {
+        return { version: STUDY_TIME_VERSION, days: {}, updatedAt: 0 };
+    }
+
+    /**
+     * 净化单日记录：仅保留合法模块名与非负整数秒数。
+     * @param {*} raw 原始单日记录。
+     * @returns {Object} 净化后的记录。
+     */
+    function sanitizeStudyEntry(raw) {
+        const entry = {};
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+            return entry;
+        }
+        Object.keys(raw).forEach((mod) => {
+            if (!/^[A-Za-z0-9_-]{1,24}$/.test(mod)) {
+                return;
+            }
+            const seconds = Math.floor(Number(raw[mod]));
+            if (Number.isFinite(seconds) && seconds > 0) {
+                entry[mod] = seconds;
+            }
+        });
+        return entry;
+    }
+
+    function sumStudyEntry(entry) {
+        if (!entry || typeof entry !== 'object') {
+            return 0;
+        }
+        return Object.keys(entry).reduce((acc, mod) => acc + (Number(entry[mod]) || 0), 0);
+    }
+
+    /**
+     * 读取学习时长数据。任何异常都退化为空数据，避免阻塞页面。
+     * @returns {{version: number, days: Object, updatedAt: number}} 学习时长数据。
+     */
+    function loadStudyTime() {
+        let stored = null;
+        try {
+            stored = localStorage.getItem(STUDY_TIME_KEY);
+        } catch (_) {
+            return createEmptyStudyTime();
+        }
+        if (!stored) {
+            return createEmptyStudyTime();
+        }
+        try {
+            const parsed = JSON.parse(stored);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                return createEmptyStudyTime();
+            }
+            const sourceDays = parsed.days && typeof parsed.days === 'object' && !Array.isArray(parsed.days)
+                ? parsed.days
+                : {};
+            const days = {};
+            Object.keys(sourceDays).forEach((key) => {
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) {
+                    return;
+                }
+                const entry = sanitizeStudyEntry(sourceDays[key]);
+                if (sumStudyEntry(entry) > 0) {
+                    days[key] = entry;
+                }
+            });
+            // 超限时丢弃最旧的数据（YYYY-MM-DD 可直接按字典序排序）
+            const keys = Object.keys(days).sort();
+            if (keys.length > STUDY_DAY_LIMIT) {
+                keys.slice(0, keys.length - STUDY_DAY_LIMIT).forEach((key) => {
+                    delete days[key];
+                });
+            }
+            return {
+                version: STUDY_TIME_VERSION,
+                days,
+                updatedAt: Number.isFinite(parsed.updatedAt) ? parsed.updatedAt : 0
+            };
+        } catch (_) {
+            return createEmptyStudyTime();
+        }
+    }
+
+    /**
+     * 写入学习时长数据。
+     * @param {Object} data 学习时长数据。
+     * @returns {boolean} 是否写入成功。
+     */
+    function saveStudyTime(data) {
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            return false;
+        }
+        try {
+            localStorage.setItem(STUDY_TIME_KEY, JSON.stringify(data));
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    /**
+     * 累加学习时长（秒）。采用「读取-合并-写回」，多标签页同时学习也不会互相覆盖。
+     * @param {number} seconds 本次累计的秒数。
+     * @param {string} moduleName 模块名，如 lesson / dictation。
+     * @returns {boolean} 是否写入成功。
+     */
+    function addStudyTime(seconds, moduleName) {
+        const secs = Math.round(Number(seconds));
+        if (!Number.isFinite(secs) || secs <= 0) {
+            return false;
+        }
+        const mod = String(moduleName || 'study').slice(0, 24) || 'study';
+        const data = loadStudyTime();
+        const dayKey = getStudyDayKey();
+        if (!data.days[dayKey]) {
+            data.days[dayKey] = {};
+        }
+        data.days[dayKey][mod] = (data.days[dayKey][mod] || 0) + secs;
+        data.updatedAt = Date.now();
+        return saveStudyTime(data);
+    }
+
+    /**
+     * 汇总学习统计数据。
+     * @returns {{today: number, todayByModule: Object, total: number, streak: number, studiedDays: number, last7: Array, updatedAt: number}} 统计数据。
+     */
+    function getStudyStats() {
+        const data = loadStudyTime();
+        const days = data.days;
+        const todayEntry = days[getStudyDayKey()] || {};
+
+        let total = 0;
+        Object.keys(days).forEach((key) => {
+            total += sumStudyEntry(days[key]);
+        });
+
+        // 连续学习天数：今天有学习则从今天起算，否则从昨天起算（今天还没学不算断）
+        let streak = 0;
+        const cursor = new Date();
+        if (sumStudyEntry(days[getStudyDayKey(cursor)]) <= 0) {
+            cursor.setDate(cursor.getDate() - 1);
+        }
+        while (sumStudyEntry(days[getStudyDayKey(cursor)]) > 0) {
+            streak += 1;
+            cursor.setDate(cursor.getDate() - 1);
+        }
+
+        const last7 = [];
+        for (let offset = 6; offset >= 0; offset -= 1) {
+            const date = new Date();
+            date.setDate(date.getDate() - offset);
+            const key = getStudyDayKey(date);
+            const entry = days[key] || {};
+            last7.push({
+                date: key,
+                weekday: date.getDay(),
+                total: sumStudyEntry(entry),
+                lesson: Math.floor(Number(entry.lesson)) || 0,
+                dictation: Math.floor(Number(entry.dictation)) || 0
+            });
+        }
+
+        return {
+            today: sumStudyEntry(todayEntry),
+            todayByModule: Object.assign({}, todayEntry),
+            total,
+            streak,
+            studiedDays: Object.keys(days).length,
+            last7,
+            updatedAt: data.updatedAt
+        };
+    }
+
+    /**
+     * 格式化学习时长。
+     * @param {number} seconds 秒数。
+     * @returns {string} 形如「30 秒」「25 分钟」「1 小时 30 分」。
+     */
+    function formatStudyDuration(seconds) {
+        const secs = Math.max(0, Math.floor(Number(seconds) || 0));
+        if (secs <= 0) {
+            return '0 分钟';
+        }
+        if (secs < 60) {
+            return `${secs} 秒`;
+        }
+        const minutes = Math.floor(secs / 60);
+        if (minutes < 60) {
+            return `${minutes} 分钟`;
+        }
+        const hours = Math.floor(minutes / 60);
+        const rest = minutes % 60;
+        return rest > 0 ? `${hours} 小时 ${rest} 分` : `${hours} 小时`;
+    }
+
+    /**
+     * 启动学习时长追踪器。
+     * 计时条件：页面可见，且用户近期有交互（或 isEngaged 返回 true，如音频播放中）；
+     * 空闲超过 idleTimeout 暂停计时，长时间无交互后即使处于播放状态也停止计时。
+     * @param {Object} [options] 配置项。
+     * @param {string} [options.module] 模块名，如 lesson / dictation。
+     * @param {number} [options.tickInterval] 心跳间隔（毫秒，最小 5000，默认 15000）。
+     * @param {number} [options.idleTimeout] 空闲判定阈值（毫秒，默认 3 分钟）。
+     * @param {number} [options.engagementGraceTimeout] 无交互仍持续计时的上限（毫秒，默认 30 分钟）。
+     * @param {Function} [options.isEngaged] 返回 true 表示处于持续学习状态（如音频播放中）。
+     * @param {Function} [options.isEnabled] 返回 false 时暂停计时（如听写未开始）。
+     * @returns {{stop: Function, flush: Function, getPending: Function}} 控制器。
+     */
+    function startStudyTimer(options = {}) {
+        const win = typeof window !== 'undefined' ? window : null;
+        const doc = typeof document !== 'undefined' ? document : null;
+        if (!win || !doc) {
+            return { stop() {}, flush() {}, getPending() { return 0; } };
+        }
+
+        const moduleName = String(options.module || 'study').slice(0, 24) || 'study';
+        const tickInterval = Math.max(5000, Number(options.tickInterval) || 15000);
+        const idleTimeout = Math.max(30000, Number(options.idleTimeout) || 3 * 60 * 1000);
+        const engagementGrace = Math.max(idleTimeout, Number(options.engagementGraceTimeout) || 30 * 60 * 1000);
+        const isEngaged = typeof options.isEngaged === 'function' ? options.isEngaged : null;
+        const isEnabled = typeof options.isEnabled === 'function' ? options.isEnabled : null;
+        const FLUSH_THRESHOLD = 20; // 秒：攒够 20 秒写一次 localStorage，减少写入频率
+
+        let lastTick = Date.now();
+        let lastActivity = Date.now();
+        let pending = 0;
+        let stopped = false;
+
+        function markActivity() {
+            lastActivity = Date.now();
+        }
+
+        const activityEvents = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'wheel', 'touchstart'];
+        activityEvents.forEach((type) => {
+            win.addEventListener(type, markActivity, { passive: true, capture: true });
+        });
+
+        function flush() {
+            if (pending <= 0) {
+                return;
+            }
+            const seconds = Math.round(pending);
+            if (seconds <= 0) {
+                pending = 0;
+                return;
+            }
+            try {
+                if (addStudyTime(seconds, moduleName)) {
+                    pending = 0;
+                }
+            } catch (_) {
+                /* 写入失败时保留 pending，下次再试 */
+            }
+        }
+
+        function accumulate(now, accumulateOptions) {
+            const ignoreHidden = !!(accumulateOptions && accumulateOptions.ignoreHidden);
+            const delta = Math.min((now - lastTick) / 1000, 60);
+            lastTick = now;
+            if (stopped || delta <= 0) {
+                return;
+            }
+            if (!ignoreHidden && doc.hidden) {
+                return;
+            }
+            if (isEnabled && !isEnabled()) {
+                return;
+            }
+            const interactedRecently = (now - lastActivity) < idleTimeout;
+            const engaged = isEngaged ? !!isEngaged() : false;
+            const longIdle = (now - lastActivity) > engagementGrace;
+            if (!interactedRecently && !(engaged && !longIdle)) {
+                return;
+            }
+            pending += delta;
+            if (pending >= FLUSH_THRESHOLD) {
+                flush();
+            }
+        }
+
+        function tick() {
+            accumulate(Date.now());
+        }
+
+        function handleVisibilityChange() {
+            if (doc.hidden) {
+                // 隐藏前把这段可见时间结清
+                accumulate(Date.now(), { ignoreHidden: true });
+                flush();
+            } else {
+                lastTick = Date.now();
+                lastActivity = Date.now();
+            }
+        }
+
+        const timer = win.setInterval(tick, tickInterval);
+        doc.addEventListener('visibilitychange', handleVisibilityChange);
+        win.addEventListener('pagehide', flush);
+        win.addEventListener('beforeunload', flush);
+
+        function stop() {
+            if (stopped) {
+                return;
+            }
+            accumulate(Date.now(), { ignoreHidden: true });
+            flush();
+            stopped = true;
+            win.clearInterval(timer);
+            activityEvents.forEach((type) => {
+                win.removeEventListener(type, markActivity, { capture: true });
+            });
+            doc.removeEventListener('visibilitychange', handleVisibilityChange);
+            win.removeEventListener('pagehide', flush);
+            win.removeEventListener('beforeunload', flush);
+        }
+
+        return { stop, flush, getPending: () => pending };
+    }
+
     const utils = {
         hashString,
         escapeForSvg,
@@ -780,7 +1122,16 @@
         normalizeAnswer,
         loadDictationPool,
         saveDictationPool,
-        upsertDictationSentences
+        upsertDictationSentences,
+        // 学习时长统计
+        STUDY_TIME_KEY,
+        getStudyDayKey,
+        loadStudyTime,
+        saveStudyTime,
+        addStudyTime,
+        getStudyStats,
+        formatStudyDuration,
+        startStudyTimer
     };
 
     if (typeof window !== 'undefined') {
