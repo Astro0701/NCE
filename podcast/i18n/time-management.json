@@ -1,0 +1,40 @@
+{
+ "id": "time-management",
+ "title": "Time Management",
+ "level": "中级",
+ "number": 2,
+ "duration": 75.9,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "今天我想聊聊时间管理。",
+  "时间是我们生命中最宝贵的东西之一。",
+  "然而，很多人总觉得时间不够用。",
+  "事实上，问题不在于我们缺少时间，而在于我们没有用好它。",
+  "好的时间管理，意味着为一天制定清晰的计划。",
+  "比如，我们可以把要做的事列出来，判断哪些任务最重要。",
+  "先专注处理重要的事，就能提高效率、避免浪费时间。",
+  "另一个要点是避免分心。",
+  "如今，很多人花太多时间在手机上，尤其是社交媒体。",
+  "人很容易在不知不觉中就忘了时间。",
+  "因此，我们该学会自控，学习或工作时保持专注。",
+  "另外，平衡工作与休息也很重要。",
+  "管理好时间并不意味着一直在工作。",
+  "适当的休息能帮我们保持精力，提升表现。",
+  "在我看来，时间管理不仅是一种技能，更是一种习惯。",
+  "如果每天都能明智地使用时间，我们就能做成更多事，压力也更小。",
+  "总之，每个人一天都只有 24 小时，但怎么用差别很大。",
+  "学会管理好时间，我们就能为自己创造更好的未来。"
+ ],
+ "vocabulary": [
+  {"term": "time management", "definition": "时间管理。"},
+  {"term": "valuable", "definition": "宝贵的；有价值的。"},
+  {"term": "lack", "definition": "缺乏；缺少。"},
+  {"term": "task", "definition": "任务；工作。"},
+  {"term": "efficiency", "definition": "效率。"},
+  {"term": "distraction", "definition": "分心的事物；干扰。"},
+  {"term": "social media", "definition": "社交媒体。"},
+  {"term": "lose track of time", "definition": "忘记时间；对时间失去概念。"},
+  {"term": "energetic", "definition": "精力充沛的。"},
+  {"term": "stressed", "definition": "有压力的；紧张的。"}
+ ]
+}

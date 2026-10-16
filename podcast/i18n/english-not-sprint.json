@@ -1,0 +1,36 @@
+{
+ "id": "english-not-sprint",
+ "title": "Learning English Is Not a Sprint",
+ "level": "中级",
+ "number": 1,
+ "duration": 86.3,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "很多人总想在短时间内快速提高英语。",
+  "他们今天背几百个单词，明天做无数道练习，后天又开始啃难懂的语法。",
+  "看起来像是在努力，其实只是在焦虑地追赶进度。",
+  "语言学习从来不是短跑。",
+  "它是一段漫长的旅程，需要耐心和稳定的付出。",
+  "真正把英语学好的人，往往不是学得最快的，而是愿意沉住气、一步一步往前走的人。",
+  "想太快学会英语，永远不会有好结果。",
+  "贪多求快，最后只会一无所获。",
+  "真正的进步，永远来自每天的积累。",
+  "没有必要盲目赶进度。",
+  "慢下来，把每一个知识点都彻底弄懂。",
+  "打好扎实的基础，稳稳地往前走。",
+  "沉静而扎实的学习，远比焦躁地刷无穷无尽的题更有价值。",
+  "保持耐心，一点一点地学，长期坚持下去。",
+  "你的英语水平自然会一步一步提升。"
+ ],
+ "vocabulary": [
+  {"term": "improve", "definition": "提高；改善。"},
+  {"term": "memorize", "definition": "背诵；记住。"},
+  {"term": "countless", "definition": "数不清的；无数的。"},
+  {"term": "sprint", "definition": "短跑。比喻短时间内全力冲刺。"},
+  {"term": "patience", "definition": "耐心。"},
+  {"term": "steady", "definition": "稳定的；平稳的。"},
+  {"term": "accumulation", "definition": "积累。一点一点攒起来的过程。"},
+  {"term": "foundation", "definition": "基础；根基。"},
+  {"term": "persist", "definition": "坚持；持续。"}
+ ]
+}

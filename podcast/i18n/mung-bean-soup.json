@@ -1,0 +1,33 @@
+{
+ "id": "mung-bean-soup",
+ "title": "Making Mung Bean Soup",
+ "level": "初级",
+ "number": 5,
+ "duration": 65.7,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "天太热了。",
+  "我们来做绿豆汤吧。",
+  "太好了，奶奶！",
+  "你看！豆子变大了！",
+  "等等！我们待会儿再煮。",
+  "请再多加点糖！",
+  "好，会甜甜的。",
+  "哇，闻起来好甜呀。",
+  "小心，很烫的。",
+  "哦，水好凉。",
+  "我们把汤放这儿晾凉吧。",
+  "耶，汤凉啦！",
+  "这汤真好喝！",
+  "是啊，又香又凉爽。"
+ ],
+ "vocabulary": [
+  {"term": "mung bean", "definition": "绿豆。常用来煮消暑的绿豆汤。"},
+  {"term": "soup", "definition": "汤。"},
+  {"term": "bean", "definition": "豆子。"},
+  {"term": "sugar", "definition": "糖。"},
+  {"term": "cool", "definition": "凉的；冷却。这里指把汤放凉。"},
+  {"term": "careful", "definition": "小心的；当心的。"},
+  {"term": "yummy", "definition": "好吃的。儿语说法。"}
+ ]
+}

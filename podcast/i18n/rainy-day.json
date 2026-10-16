@@ -1,0 +1,36 @@
+{
+ "id": "rainy-day",
+ "title": "What a Lovely Rainy Day",
+ "level": "初级",
+ "number": 3,
+ "duration": 60.7,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "下雨啦，宝贝。",
+  "好无聊啊。",
+  "等一下。",
+  "把雨衣穿上，亲爱的。",
+  "我可以出去玩吗？",
+  "可以呀。",
+  "我跑得快。",
+  "我跳得高。",
+  "小心点。",
+  "小鸡、小猫、小兔和小蜗牛都来玩啦。",
+  "你们好呀，朋友们。我们转圈圈，我们跳舞。",
+  "奶奶，你也来玩。",
+  "下雨天真好玩。",
+  "快看，彩虹！",
+  "多么美好的下雨天啊！"
+ ],
+ "vocabulary": [
+  {"term": "raincoat", "definition": "雨衣。下雨时穿在外面的防水外套。"},
+  {"term": "sweetie", "definition": "宝贝；亲爱的。长辈对孩子的亲昵称呼。"},
+  {"term": "boring", "definition": "无聊的；没意思的。"},
+  {"term": "chick", "definition": "小鸡；雏鸟。"},
+  {"term": "bunny", "definition": "小兔子。儿语说法。"},
+  {"term": "snail", "definition": "蜗牛。"},
+  {"term": "spin", "definition": "旋转；转圈。"},
+  {"term": "rainbow", "definition": "彩虹。雨后天空出现的七彩弧线。"},
+  {"term": "lovely", "definition": "美好的；可爱的。"}
+ ]
+}

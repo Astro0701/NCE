@@ -1,0 +1,37 @@
+{
+ "id": "rolling-pumpkin",
+ "title": "The Rolling Pumpkin",
+ "level": "初级",
+ "number": 6,
+ "duration": 66.3,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "哎呀！南瓜滚起来啦！",
+  "快！我们抓住它！",
+  "停下，南瓜！太快啦！",
+  "让开，小鸡们！",
+  "小心点，宝贝！",
+  "它还在滚！",
+  "哇哦！",
+  "你看！它卡在干草里了！",
+  "找到它了！好重呀！",
+  "我来帮你。",
+  "一、二、三，拉！",
+  "哇！好多籽呀！",
+  "我们把它们掏出来吧。",
+  "明年春天我们可以把它们种下去！",
+  "南瓜蛋糕真好吃。",
+  "给你的，奶奶。",
+  "谢谢你，我的乖孩子。"
+ ],
+ "vocabulary": [
+  {"term": "pumpkin", "definition": "南瓜。"},
+  {"term": "roll", "definition": "滚动；滚。"},
+  {"term": "stuck", "definition": "卡住的；动弹不得的。"},
+  {"term": "hay", "definition": "干草。晒干的草，常堆在农场里。"},
+  {"term": "seed", "definition": "种子；籽。"},
+  {"term": "scoop", "definition": "舀出；掏出来。"},
+  {"term": "plant", "definition": "种植；栽种。"},
+  {"term": "spring", "definition": "春天。"}
+ ]
+}

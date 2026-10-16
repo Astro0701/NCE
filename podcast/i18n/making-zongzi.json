@@ -1,0 +1,37 @@
+{
+ "id": "making-zongzi",
+ "title": "Making Zongzi with Grandma",
+ "level": "初级",
+ "number": 11,
+ "duration": 75.1,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。转写把 sticky rice 听成 sticky gneiss、pot 听成 pond、zongzi 听成 Zongza，译文已按正确词义处理。",
+ "cues": [
+  "早上好，奶奶。你在做什么呀？",
+  "早上好，宝贝。我在包粽子。",
+  "包粽子？我可以帮忙吗？",
+  "当然，过来一起吧。",
+  "先把竹叶折起来。",
+  "折呀折。是这样吗？",
+  "对，你做得很好。",
+  "现在往里面填糯米和红枣。",
+  "填呀填，满啦。",
+  "现在用绳子把它绑紧。",
+  "绑呀绑，绑好啦。",
+  "做得真棒。",
+  "放进锅里，该煮啦。",
+  "咕嘟咕嘟！一定很好吃！",
+  "好啦，我们一起吃吧。",
+  "嗯，真好吃！我太喜欢粽子了！",
+  "我也喜欢粽子！"
+ ],
+ "vocabulary": [
+  {"term": "zongzi", "definition": "粽子。用竹叶或苇叶包糯米蒸煮的传统食物。"},
+  {"term": "fold", "definition": "折叠。这里指把粽叶折成漏斗状。"},
+  {"term": "bamboo leaves", "definition": "竹叶。包粽子常用的叶子。"},
+  {"term": "sticky rice", "definition": "糯米。煮熟后黏性很强的米。"},
+  {"term": "red dates", "definition": "红枣。常作为粽子的馅料。"},
+  {"term": "tie", "definition": "系；绑。"},
+  {"term": "string", "definition": "细绳。"},
+  {"term": "join me", "definition": "和我一起（做某事）。"}
+ ]
+}

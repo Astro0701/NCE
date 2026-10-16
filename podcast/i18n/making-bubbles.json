@@ -1,0 +1,41 @@
+{
+ "id": "making-bubbles",
+ "title": "Grandma, I Am Making Bubbles!",
+ "level": "初级",
+ "number": 8,
+ "duration": 70.9,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "奶奶，我在做泡泡！",
+  "哎呀！",
+  "我们一起做吧。",
+  "我们需要温水，",
+  "洗衣粉，还有糖。",
+  "糖？",
+  "对，这样泡泡才结实。",
+  "搅一搅，搅一搅！",
+  "哎呀！",
+  "慢慢搅，宝贝。",
+  "你看，好多肥皂泡！",
+  "真棒！",
+  "啪、啪、啪、啪、啪！",
+  "现在看这个——一个衣架。",
+  "衣架？",
+  "对，用来吹一个巨型泡泡。",
+  "哇！它飞起来了！",
+  "快跑，宝贝，快跑！",
+  "它要飞到天上去了！",
+  "泡泡真漂亮。",
+  "是啊，就像做梦一样。",
+  "我爱你，奶奶。"
+ ],
+ "vocabulary": [
+  {"term": "bubble", "definition": "泡泡；气泡。"},
+  {"term": "washing powder", "definition": "洗衣粉。"},
+  {"term": "stir", "definition": "搅拌。"},
+  {"term": "soap", "definition": "肥皂。"},
+  {"term": "pop", "definition": "啪的一声破掉。这里指泡泡爆开的声音。"},
+  {"term": "hanger", "definition": "衣架。这里被用来吹大泡泡。"},
+  {"term": "giant", "definition": "巨大的；巨型。"}
+ ]
+}

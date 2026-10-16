@@ -93,6 +93,508 @@
    "definition": "搭把手；一起出力。指大家共同分担某项工作。"
   }
  ],
+ "english-not-sprint": [
+  {
+   "term": "improve",
+   "definition": "提高；改善。"
+  },
+  {
+   "term": "memorize",
+   "definition": "背诵；记住。"
+  },
+  {
+   "term": "countless",
+   "definition": "数不清的；无数的。"
+  },
+  {
+   "term": "sprint",
+   "definition": "短跑。比喻短时间内全力冲刺。"
+  },
+  {
+   "term": "patience",
+   "definition": "耐心。"
+  },
+  {
+   "term": "steady",
+   "definition": "稳定的；平稳的。"
+  },
+  {
+   "term": "accumulation",
+   "definition": "积累。一点一点攒起来的过程。"
+  },
+  {
+   "term": "foundation",
+   "definition": "基础；根基。"
+  },
+  {
+   "term": "persist",
+   "definition": "坚持；持续。"
+  }
+ ],
+ "time-management": [
+  {
+   "term": "time management",
+   "definition": "时间管理。"
+  },
+  {
+   "term": "valuable",
+   "definition": "宝贵的；有价值的。"
+  },
+  {
+   "term": "lack",
+   "definition": "缺乏；缺少。"
+  },
+  {
+   "term": "task",
+   "definition": "任务；工作。"
+  },
+  {
+   "term": "efficiency",
+   "definition": "效率。"
+  },
+  {
+   "term": "distraction",
+   "definition": "分心的事物；干扰。"
+  },
+  {
+   "term": "social media",
+   "definition": "社交媒体。"
+  },
+  {
+   "term": "lose track of time",
+   "definition": "忘记时间；对时间失去概念。"
+  },
+  {
+   "term": "energetic",
+   "definition": "精力充沛的。"
+  },
+  {
+   "term": "stressed",
+   "definition": "有压力的；紧张的。"
+  }
+ ],
+ "future-goals": [
+  {
+   "term": "goal",
+   "definition": "目标。"
+  },
+  {
+   "term": "knowledge",
+   "definition": "知识。"
+  },
+  {
+   "term": "communicate",
+   "definition": "交流；沟通。"
+  },
+  {
+   "term": "overseas",
+   "definition": "海外的；国外的。go overseas 即出国。"
+  },
+  {
+   "term": "recipe",
+   "definition": "食谱；菜谱。"
+  },
+  {
+   "term": "contribute",
+   "definition": "贡献；出力。"
+  },
+  {
+   "term": "charity",
+   "definition": "慈善机构。"
+  },
+  {
+   "term": "volunteer",
+   "definition": "做志愿者；志愿服务。"
+  },
+  {
+   "term": "determination",
+   "definition": "决心；毅力。"
+  }
+ ],
+ "morning-exercises": [
+  {
+   "term": "morning exercises",
+   "definition": "晨练；早操。"
+  },
+  {
+   "term": "routine",
+   "definition": "日常惯例；固定流程。"
+  },
+  {
+   "term": "stretch",
+   "definition": "伸展；拉伸。"
+  },
+  {
+   "term": "yoga",
+   "definition": "瑜伽。"
+  },
+  {
+   "term": "lift weights",
+   "definition": "举重；练器械。"
+  },
+  {
+   "term": "energetic",
+   "definition": "精力充沛的。"
+  },
+  {
+   "term": "motivated",
+   "definition": "有动力的；积极的。"
+  },
+  {
+   "term": "push-up",
+   "definition": "俯卧撑。"
+  },
+  {
+   "term": "pajamas",
+   "definition": "睡衣。"
+  },
+  {
+   "term": "embarrassing",
+   "definition": "令人尴尬的。"
+  },
+  {
+   "term": "jumping jack",
+   "definition": "开合跳。"
+  }
+ ],
+ "execution": [
+  {
+   "term": "execution",
+   "definition": "执行力；把计划落实为行动的能力。"
+  },
+  {
+   "term": "lack",
+   "definition": "缺乏；不足。"
+  },
+  {
+   "term": "reflect",
+   "definition": "反思；回顾总结。"
+  },
+  {
+   "term": "delay",
+   "definition": "拖延；推迟。"
+  },
+  {
+   "term": "excuse",
+   "definition": "借口。"
+  },
+  {
+   "term": "consistent",
+   "definition": "持续稳定的；一贯的。"
+  },
+  {
+   "term": "motivation",
+   "definition": "动力；积极性。"
+  },
+  {
+   "term": "consistency",
+   "definition": "坚持；前后一致。"
+  },
+  {
+   "term": "put into practice",
+   "definition": "付诸实践；实际去做。"
+  },
+  {
+   "term": "distraction",
+   "definition": "干扰；让人分心的事物。"
+  },
+  {
+   "term": "disciplined",
+   "definition": "自律的。"
+  },
+  {
+   "term": "persistence",
+   "definition": "坚持；锲而不舍。"
+  }
+ ],
+ "living-abroad": [
+  {
+   "term": "live abroad",
+   "definition": "在国外生活。abroad 指到国外、在国外。"
+  },
+  {
+   "term": "expat",
+   "definition": "侨居国外的人；外派人士。expatriate 的缩写。"
+  },
+  {
+   "term": "insight",
+   "definition": "洞见；深入的了解。"
+  },
+  {
+   "term": "comprehension",
+   "definition": "理解力；领会。"
+  },
+  {
+   "term": "butterflies in your stomach",
+   "definition": "心里七上八下。形容紧张又兴奋的感觉。"
+  },
+  {
+   "term": "no-brainer",
+   "definition": "不用动脑子的事；显而易见的选择。"
+  },
+  {
+   "term": "punctuality",
+   "definition": "守时。"
+  },
+  {
+   "term": "infrastructure",
+   "definition": "基础设施。道路、水电、通信等公共设施。"
+  },
+  {
+   "term": "adapt",
+   "definition": "适应；调整自己。"
+  },
+  {
+   "term": "static noise",
+   "definition": "电流杂音。比喻听不出意义的一片噪声。"
+  },
+  {
+   "term": "loved ones",
+   "definition": "亲人；所爱的人。"
+  },
+  {
+   "term": "pick up",
+   "definition": "（自然地）学会；习得。"
+  }
+ ],
+ "listening-methods": [
+  {
+   "term": "fluency",
+   "definition": "流利；流利度。"
+  },
+  {
+   "term": "repetition",
+   "definition": "重复。"
+  },
+  {
+   "term": "recognition",
+   "definition": "识别；辨认。听到就能认出来的能力。"
+  },
+  {
+   "term": "intonation",
+   "definition": "语调。说话时声音的高低起伏。"
+  },
+  {
+   "term": "rhythm",
+   "definition": "节奏。"
+  },
+  {
+   "term": "melody",
+   "definition": "旋律。"
+  },
+  {
+   "term": "consistency",
+   "definition": "坚持；一贯性。"
+  },
+  {
+   "term": "intensity",
+   "definition": "强度。"
+  },
+  {
+   "term": "familiarity",
+   "definition": "熟悉；熟悉程度。"
+  },
+  {
+   "term": "messy",
+   "definition": "凌乱的；不规整的。这里形容真实口语不按教科书来。"
+  },
+  {
+   "term": "automatic",
+   "definition": "自动的；不假思索的。"
+  },
+  {
+   "term": "beat",
+   "definition": "胜过；打败。consistency beats intensity 即「坚持胜过强度」。"
+  }
+ ],
+ "chores": [
+  {
+   "term": "chore",
+   "definition": "家务；日常杂活。"
+  },
+  {
+   "term": "routine",
+   "definition": "例行的；日常的。"
+  },
+  {
+   "term": "put away",
+   "definition": "把东西收好；放回原处。"
+  },
+  {
+   "term": "closet",
+   "definition": "衣柜；壁橱。"
+  },
+  {
+   "term": "dresser",
+   "definition": "抽屉柜；五斗柜。"
+  },
+  {
+   "term": "trash",
+   "definition": "垃圾。"
+  },
+  {
+   "term": "garbage truck",
+   "definition": "垃圾车。"
+  },
+  {
+   "term": "curb",
+   "definition": "路缘；马路牙子。人行道靠近车道的边缘。"
+  },
+  {
+   "term": "gross",
+   "definition": "恶心的；令人不适的。口语说法。"
+  },
+  {
+   "term": "disgusting",
+   "definition": "令人反感的；很恶心的。"
+  },
+  {
+   "term": "skim",
+   "definition": "撇去；捞去水面漂浮物。"
+  },
+  {
+   "term": "allowance",
+   "definition": "零花钱。父母按约定给孩子的一笔钱。"
+  },
+  {
+   "term": "responsibility",
+   "definition": "责任；责任心。"
+  },
+  {
+   "term": "pay off",
+   "definition": "有回报；得到好结果。"
+  }
+ ],
+ "think-in-english": [
+  {
+   "term": "think in English",
+   "definition": "用英语思考。不经过母语翻译，直接用英语组织想法。"
+  },
+  {
+   "term": "inner voice",
+   "definition": "内心的声音。脑子里那个跟自己说话的声音。"
+  },
+  {
+   "term": "automatic",
+   "definition": "自动的；不假思索的。"
+  },
+  {
+   "term": "sponge",
+   "definition": "海绵。比喻吸收能力极强的头脑。"
+  },
+  {
+   "term": "immersion",
+   "definition": "沉浸；沉浸式学习。把自己完全放进语言环境里。"
+  },
+  {
+   "term": "visualization",
+   "definition": "想象；视觉化。把词直接连到脑海中的画面。"
+  },
+  {
+   "term": "straight to the point",
+   "definition": "直奔主题；直截了当。"
+  },
+  {
+   "term": "exhausted",
+   "definition": "筋疲力尽的。"
+  },
+  {
+   "term": "habit of expression",
+   "definition": "表达习惯。一种语言习惯性的说话方式。"
+  },
+  {
+   "term": "safe space",
+   "definition": "安全区。可以放心犯错、不被评判的地方。"
+  }
+ ],
+ "listening-gist": [
+  {
+   "term": "gist",
+   "definition": "大意；主旨。一段话的核心意思。"
+  },
+  {
+   "term": "stressed",
+   "definition": "重读的。句子中被强调、读得较重的词。"
+  },
+  {
+   "term": "weak form",
+   "definition": "弱读。功能词在语流中被弱化、含混的读法。"
+  },
+  {
+   "term": "rhythm",
+   "definition": "节奏。"
+  },
+  {
+   "term": "dictation",
+   "definition": "听写。边听边把内容写下来。"
+  },
+  {
+   "term": "infer",
+   "definition": "推断；推测出意思。"
+  },
+  {
+   "term": "frustrated",
+   "definition": "挫败的；沮丧的。"
+  },
+  {
+   "term": "exposure",
+   "definition": "接触；暴露。指长期接触某语言。"
+  },
+  {
+   "term": "subtitle",
+   "definition": "字幕。"
+  },
+  {
+   "term": "keyword",
+   "definition": "关键词。"
+  }
+ ],
+ "excellence": [
+  {
+   "term": "excellence",
+   "definition": "卓越；出色。"
+  },
+  {
+   "term": "heroic",
+   "definition": "英雄般的；壮举式的。"
+  },
+  {
+   "term": "consistency",
+   "definition": "坚持；稳定的持续性。"
+  },
+  {
+   "term": "patience",
+   "definition": "耐心。"
+  },
+  {
+   "term": "plateau",
+   "definition": "平台期。努力却看不到明显进步的阶段。"
+  },
+  {
+   "term": "burn out",
+   "definition": "耗竭；过度劳累而垮掉。"
+  },
+  {
+   "term": "commitment",
+   "definition": "投入；承诺。"
+  },
+  {
+   "term": "discipline",
+   "definition": "自律。"
+  },
+  {
+   "term": "overnight success",
+   "definition": "一夜成名。指看似突然、实则长期积累的成功。"
+  },
+  {
+   "term": "meaningful",
+   "definition": "有意义的。"
+  },
+  {
+   "term": "process",
+   "definition": "过程。相对于「结果」而言。"
+  }
+ ],
  "daily-speaking": [
   {
    "term": "habit",
@@ -157,6 +659,794 @@
   {
    "term": "grow",
    "definition": "成长；进步。指能力在反复练习中提升。"
+  }
+ ],
+ "small-steps": [
+  {
+   "term": "progress",
+   "definition": "进步；进展。向目标靠近的过程。"
+  },
+  {
+   "term": "leap mountains",
+   "definition": "跨越群山。比喻完成极其艰巨的任务。"
+  },
+  {
+   "term": "overwhelmed",
+   "definition": "不堪重负的；被压垮的。觉得任务太大而无力应对。"
+  },
+  {
+   "term": "achievement",
+   "definition": "成就；成绩。通过努力取得的结果。"
+  },
+  {
+   "term": "consistent",
+   "definition": "持续的；一贯的。长期稳定地做同一件事。"
+  },
+  {
+   "term": "persistent",
+   "definition": "坚持不懈的。遇到困难也不放弃。"
+  },
+  {
+   "term": "resilience",
+   "definition": "韧性；复原力。受挫后能重新站起来的能力。"
+  },
+  {
+   "term": "underestimate",
+   "definition": "低估。对某事物的价值或力量估计不足。"
+  }
+ ],
+ "rainy-day": [
+  {
+   "term": "raincoat",
+   "definition": "雨衣。下雨时穿在外面的防水外套。"
+  },
+  {
+   "term": "sweetie",
+   "definition": "宝贝；亲爱的。长辈对孩子的亲昵称呼。"
+  },
+  {
+   "term": "boring",
+   "definition": "无聊的；没意思的。"
+  },
+  {
+   "term": "chick",
+   "definition": "小鸡；雏鸟。"
+  },
+  {
+   "term": "bunny",
+   "definition": "小兔子。儿语说法。"
+  },
+  {
+   "term": "snail",
+   "definition": "蜗牛。"
+  },
+  {
+   "term": "spin",
+   "definition": "旋转；转圈。"
+  },
+  {
+   "term": "rainbow",
+   "definition": "彩虹。雨后天空出现的七彩弧线。"
+  },
+  {
+   "term": "lovely",
+   "definition": "美好的；可爱的。"
+  }
+ ],
+ "pick-corn": [
+  {
+   "term": "peek-a-boo",
+   "definition": "躲猫猫。逗小孩玩的游戏，也是英语里逗宝宝时的口头语。"
+  },
+  {
+   "term": "corn",
+   "definition": "玉米。"
+  },
+  {
+   "term": "twist",
+   "definition": "拧；扭。这里指把玉米拧下来。"
+  },
+  {
+   "term": "peel",
+   "definition": "剥皮；削皮。"
+  },
+  {
+   "term": "beard",
+   "definition": "胡须。这里指剥开的玉米须，像大胡子。"
+  },
+  {
+   "term": "roast",
+   "definition": "烤。用火直接烘烤食物。"
+  },
+  {
+   "term": "chef",
+   "definition": "厨师。"
+  },
+  {
+   "term": "yummy",
+   "definition": "好吃的。儿语说法。"
+  }
+ ],
+ "mung-bean-soup": [
+  {
+   "term": "mung bean",
+   "definition": "绿豆。常用来煮消暑的绿豆汤。"
+  },
+  {
+   "term": "soup",
+   "definition": "汤。"
+  },
+  {
+   "term": "bean",
+   "definition": "豆子。"
+  },
+  {
+   "term": "sugar",
+   "definition": "糖。"
+  },
+  {
+   "term": "cool",
+   "definition": "凉的；冷却。这里指把汤放凉。"
+  },
+  {
+   "term": "careful",
+   "definition": "小心的；当心的。"
+  },
+  {
+   "term": "yummy",
+   "definition": "好吃的。儿语说法。"
+  }
+ ],
+ "rolling-pumpkin": [
+  {
+   "term": "pumpkin",
+   "definition": "南瓜。"
+  },
+  {
+   "term": "roll",
+   "definition": "滚动；滚。"
+  },
+  {
+   "term": "stuck",
+   "definition": "卡住的；动弹不得的。"
+  },
+  {
+   "term": "hay",
+   "definition": "干草。晒干的草，常堆在农场里。"
+  },
+  {
+   "term": "seed",
+   "definition": "种子；籽。"
+  },
+  {
+   "term": "scoop",
+   "definition": "舀出；掏出来。"
+  },
+  {
+   "term": "plant",
+   "definition": "种植；栽种。"
+  },
+  {
+   "term": "spring",
+   "definition": "春天。"
+  }
+ ],
+ "little-star": [
+  {
+   "term": "twinkle",
+   "definition": "闪烁；一闪一闪。星星眨眼的样子。"
+  },
+  {
+   "term": "reach",
+   "definition": "够到；伸手触及。"
+  },
+  {
+   "term": "watermelon",
+   "definition": "西瓜。"
+  },
+  {
+   "term": "shooting star",
+   "definition": "流星。划过夜空的亮光，看到可以许愿。"
+  },
+  {
+   "term": "make a wish",
+   "definition": "许愿。"
+  },
+  {
+   "term": "glow",
+   "definition": "发光；发亮。"
+  },
+  {
+   "term": "firefly",
+   "definition": "萤火虫。夏夜里腹部会发光的小虫。"
+  }
+ ],
+ "making-bubbles": [
+  {
+   "term": "bubble",
+   "definition": "泡泡；气泡。"
+  },
+  {
+   "term": "washing powder",
+   "definition": "洗衣粉。"
+  },
+  {
+   "term": "stir",
+   "definition": "搅拌。"
+  },
+  {
+   "term": "soap",
+   "definition": "肥皂。"
+  },
+  {
+   "term": "pop",
+   "definition": "啪的一声破掉。这里指泡泡爆开的声音。"
+  },
+  {
+   "term": "hanger",
+   "definition": "衣架。这里被用来吹大泡泡。"
+  },
+  {
+   "term": "giant",
+   "definition": "巨大的；巨型。"
+  }
+ ],
+ "beautiful-sea": [
+  {
+   "term": "sandcastle",
+   "definition": "沙堡。用沙子堆成的城堡。"
+  },
+  {
+   "term": "dig",
+   "definition": "挖；掘。"
+  },
+  {
+   "term": "shovel",
+   "definition": "铲子。"
+  },
+  {
+   "term": "bucket",
+   "definition": "桶。"
+  },
+  {
+   "term": "pat",
+   "definition": "轻拍；拍实。"
+  },
+  {
+   "term": "shell",
+   "definition": "贝壳。"
+  },
+  {
+   "term": "wave",
+   "definition": "海浪；波浪。"
+  },
+  {
+   "term": "crab",
+   "definition": "螃蟹。"
+  },
+  {
+   "term": "coconut juice",
+   "definition": "椰子汁；椰汁。"
+  }
+ ],
+ "go-shopping": [
+  {
+   "term": "go shopping",
+   "definition": "去购物；去买东西。"
+  },
+  {
+   "term": "cover your ears",
+   "definition": "捂住耳朵。"
+  },
+  {
+   "term": "popcorn",
+   "definition": "爆米花。"
+  },
+  {
+   "term": "spin the wheel",
+   "definition": "转转盘。游乐场抽奖的玩法。"
+  },
+  {
+   "term": "lucky",
+   "definition": "幸运的。"
+  },
+  {
+   "term": "expensive",
+   "definition": "贵的；昂贵的。"
+  },
+  {
+   "term": "deal",
+   "definition": "成交。讨价还价后达成的价格约定。"
+  },
+  {
+   "term": "share",
+   "definition": "分享；一起享用。"
+  }
+ ],
+ "making-zongzi": [
+  {
+   "term": "zongzi",
+   "definition": "粽子。用竹叶或苇叶包糯米蒸煮的传统食物。"
+  },
+  {
+   "term": "fold",
+   "definition": "折叠。这里指把粽叶折成漏斗状。"
+  },
+  {
+   "term": "bamboo leaves",
+   "definition": "竹叶。包粽子常用的叶子。"
+  },
+  {
+   "term": "sticky rice",
+   "definition": "糯米。煮熟后黏性很强的米。"
+  },
+  {
+   "term": "red dates",
+   "definition": "红枣。常作为粽子的馅料。"
+  },
+  {
+   "term": "tie",
+   "definition": "系；绑。"
+  },
+  {
+   "term": "string",
+   "definition": "细绳。"
+  },
+  {
+   "term": "join me",
+   "definition": "和我一起（做某事）。"
+  }
+ ],
+ "grandma-garden": [
+  {
+   "term": "garden",
+   "definition": "菜园；花园。"
+  },
+  {
+   "term": "vegetable",
+   "definition": "蔬菜。"
+  },
+  {
+   "term": "tomato",
+   "definition": "番茄；西红柿。"
+  },
+  {
+   "term": "cucumber",
+   "definition": "黄瓜。"
+  },
+  {
+   "term": "carrot",
+   "definition": "胡萝卜。"
+  },
+  {
+   "term": "onion",
+   "definition": "洋葱。"
+  },
+  {
+   "term": "broccoli",
+   "definition": "西兰花。"
+  },
+  {
+   "term": "basket",
+   "definition": "篮子。"
+  }
+ ],
+ "learn-to-ride": [
+  {
+   "term": "wobbly",
+   "definition": "摇晃的；不稳的。"
+  },
+  {
+   "term": "balance",
+   "definition": "平衡。骑车时保持不倒。"
+  },
+  {
+   "term": "pedal",
+   "definition": "踩踏板；蹬。"
+  },
+  {
+   "term": "brake",
+   "definition": "刹车。"
+  },
+  {
+   "term": "handlebar",
+   "definition": "自行车车把。"
+  },
+  {
+   "term": "hold tight",
+   "definition": "抓紧；扶稳。"
+  },
+  {
+   "term": "be proud of",
+   "definition": "为……感到骄傲。"
+  }
+ ],
+ "little-ducks": [
+  {
+   "term": "duck",
+   "definition": "鸭子。"
+  },
+  {
+   "term": "quack",
+   "definition": "嘎嘎叫。鸭子的叫声。"
+  },
+  {
+   "term": "waddle",
+   "definition": "摇摇摆摆地走。鸭子走路的姿态。"
+  },
+  {
+   "term": "chase",
+   "definition": "追赶。"
+  },
+  {
+   "term": "feed",
+   "definition": "喂养；喂食。"
+  },
+  {
+   "term": "splash",
+   "definition": "哗啦声；溅水。这里指鸭子入水的声音。"
+  },
+  {
+   "term": "hurry up",
+   "definition": "快点。"
+  }
+ ],
+ "washing-clothes": [
+  {
+   "term": "wash clothes",
+   "definition": "洗衣服。"
+  },
+  {
+   "term": "rub",
+   "definition": "搓；揉。用手来回摩擦来去污。"
+  },
+  {
+   "term": "rinse",
+   "definition": "漂洗；冲洗掉泡沫。"
+  },
+  {
+   "term": "wring",
+   "definition": "拧干。把衣物里的水挤出来。"
+  },
+  {
+   "term": "hang up",
+   "definition": "挂起来；晾起来。"
+  },
+  {
+   "term": "naughty",
+   "definition": "淘气的；调皮的。长辈带宠溺意味的说法。"
+  },
+  {
+   "term": "wet",
+   "definition": "湿的。"
+  }
+ ],
+ "big-watermelon": [
+  {
+   "term": "watermelon",
+   "definition": "西瓜。"
+  },
+  {
+   "term": "ripe",
+   "definition": "成熟的。指果实已经长到可以吃。"
+  },
+  {
+   "term": "knock",
+   "definition": "敲；敲击。挑西瓜时敲一敲听声音。"
+  },
+  {
+   "term": "pick",
+   "definition": "采摘。"
+  },
+  {
+   "term": "carry",
+   "definition": "搬；抱。"
+  },
+  {
+   "term": "nap",
+   "definition": "小睡；午睡。"
+  },
+  {
+   "term": "can't wait",
+   "definition": "等不及；迫不及待。"
+  }
+ ],
+ "feeding-chickens": [
+  {
+   "term": "feed",
+   "definition": "喂养；喂食。"
+  },
+  {
+   "term": "chicken",
+   "definition": "鸡。chick 指小鸡。"
+  },
+  {
+   "term": "hen",
+   "definition": "母鸡。下蛋的鸡。"
+  },
+  {
+   "term": "lay eggs",
+   "definition": "下蛋。"
+  },
+  {
+   "term": "collect",
+   "definition": "收集；捡拾。"
+  },
+  {
+   "term": "nest",
+   "definition": "巢；窝。"
+  },
+  {
+   "term": "fried egg",
+   "definition": "煎蛋。"
+  },
+  {
+   "term": "gentle",
+   "definition": "温柔的；轻柔的。"
+  }
+ ],
+ "daily-routine-sarah": [
+  {
+   "term": "daily routine",
+   "definition": "日常作息；每天的固定安排。"
+  },
+  {
+   "term": "get up",
+   "definition": "起床。指醒来并离开床。"
+  },
+  {
+   "term": "turn off",
+   "definition": "关掉（电器、闹钟等）。"
+  },
+  {
+   "term": "stretch",
+   "definition": "伸展；拉伸身体。"
+  },
+  {
+   "term": "have a shower",
+   "definition": "洗澡。也可说 take a shower。"
+  },
+  {
+   "term": "get dressed",
+   "definition": "穿好衣服。"
+  },
+  {
+   "term": "tidy up",
+   "definition": "收拾整齐；整理。"
+  },
+  {
+   "term": "put on makeup",
+   "definition": "化妆。"
+  },
+  {
+   "term": "colleague",
+   "definition": "同事。"
+  },
+  {
+   "term": "cafeteria",
+   "definition": "食堂；自助餐厅。"
+  },
+  {
+   "term": "throughout",
+   "definition": "整个……期间；自始至终。"
+  },
+  {
+   "term": "come over",
+   "definition": "（到某人家）过来；串门。"
+  },
+  {
+   "term": "pretty much",
+   "definition": "差不多；基本上。"
+  },
+  {
+   "term": "might",
+   "definition": "也许；可能。表示不确定的可能性。"
+  },
+  {
+   "term": "get ready for bed",
+   "definition": "准备睡觉。"
+  },
+  {
+   "term": "prompt",
+   "definition": "准时的；迅速不拖延的。"
+  }
+ ],
+ "talking-about-jobs": [
+  {
+   "term": "job title",
+   "definition": "职位名称。"
+  },
+  {
+   "term": "self-employed",
+   "definition": "自由职业的；自己当老板的。"
+  },
+  {
+   "term": "responsibility",
+   "definition": "职责；负责的事务。"
+  },
+  {
+   "term": "be responsible for",
+   "definition": "负责……"
+  },
+  {
+   "term": "typical day",
+   "definition": "典型的一天；平常的一天。"
+  },
+  {
+   "term": "remote",
+   "definition": "远程的。在家或其他地方办公。"
+  },
+  {
+   "term": "hybrid",
+   "definition": "混合的。部分时间在家、部分时间在公司。"
+  },
+  {
+   "term": "open space",
+   "definition": "开放式办公区。"
+  },
+  {
+   "term": "deadline",
+   "definition": "截止日期。"
+  },
+  {
+   "term": "client",
+   "definition": "客户。"
+  },
+  {
+   "term": "flexible hours",
+   "definition": "弹性工作时间。"
+  },
+  {
+   "term": "job satisfaction",
+   "definition": "工作满意度。"
+  },
+  {
+   "term": "rewarding",
+   "definition": "有回报的；让人有成就感的。"
+  },
+  {
+   "term": "career path",
+   "definition": "职业发展路径。"
+  },
+  {
+   "term": "part-time",
+   "definition": "兼职的。"
+  },
+  {
+   "term": "mindset",
+   "definition": "心态；思维方式。"
+  },
+  {
+   "term": "practice makes perfect",
+   "definition": "熟能生巧。"
+  }
+ ],
+ "money-and-happiness": [
+  {
+   "term": "illusion",
+   "definition": "幻觉；错觉。看起来真实、其实并不成立的观念。"
+  },
+  {
+   "term": "balance",
+   "definition": "平衡。生活各方面分量恰当。"
+  },
+  {
+   "term": "temporary",
+   "definition": "短暂的；临时的。"
+  },
+  {
+   "term": "lasting",
+   "definition": "持久的；长久的。"
+  },
+  {
+   "term": "purpose",
+   "definition": "意义感；目的。做一件事背后的「为什么」。"
+  },
+  {
+   "term": "pleasure",
+   "definition": "快感；愉悦。短暂而即时的感觉。"
+  },
+  {
+   "term": "peace of mind",
+   "definition": "内心安宁；心安。"
+  },
+  {
+   "term": "gratitude",
+   "definition": "感恩；感激之情。"
+  },
+  {
+   "term": "money doesn't buy happiness",
+   "definition": "金钱买不到幸福。常用英语习语。"
+  },
+  {
+   "term": "work oneself into the ground",
+   "definition": "把自己累垮；拼命到伤害身体。"
+  },
+  {
+   "term": "enjoy the simple things in life",
+   "definition": "享受生活中简单的小事。"
+  },
+  {
+   "term": "paycheck",
+   "definition": "薪水；工资单。"
+  },
+  {
+   "term": "financial stability",
+   "definition": "经济上的稳定。"
+  },
+  {
+   "term": "stressed out",
+   "definition": "压力大到不行的；极度紧张的。"
+  },
+  {
+   "term": "anchor",
+   "definition": "锚。比喻在动荡中让人稳住的东西。"
+  }
+ ],
+ "morning-routine": [
+  {
+   "term": "morning routine",
+   "definition": "晨间流程；早晨的固定安排。"
+  },
+  {
+   "term": "snooze button",
+   "definition": "闹钟上的「再睡一会儿」按钮。"
+  },
+  {
+   "term": "make the bed",
+   "definition": "铺床；整理床铺。"
+  },
+  {
+   "term": "get the blood flowing",
+   "definition": "让血液流动起来。指做些轻度活动唤醒身体。"
+  },
+  {
+   "term": "dehydrated",
+   "definition": "脱水的；缺水的。"
+  },
+  {
+   "term": "balanced breakfast",
+   "definition": "营养均衡的早餐。"
+  },
+  {
+   "term": "scrambled eggs",
+   "definition": "炒蛋。"
+  },
+  {
+   "term": "oatmeal",
+   "definition": "燕麦粥。"
+  },
+  {
+   "term": "agenda",
+   "definition": "日程本；记事本。"
+  },
+  {
+   "term": "to-do list",
+   "definition": "待办清单。"
+  },
+  {
+   "term": "overwhelming",
+   "definition": "让人应接不暇的；压力过大的。"
+  },
+  {
+   "term": "pick out",
+   "definition": "挑出；挑选。比 select 更口语。"
+  },
+  {
+   "term": "check",
+   "definition": "查看；看一眼（消息、邮件等）。"
+  },
+  {
+   "term": "mindset",
+   "definition": "心态；思维方式。"
+  },
+  {
+   "term": "empowering",
+   "definition": "让人充满力量的；赋予掌控感的。"
+  },
+  {
+   "term": "discipline",
+   "definition": "自律。"
   }
  ]
 }

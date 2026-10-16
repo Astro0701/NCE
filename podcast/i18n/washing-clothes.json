@@ -1,0 +1,35 @@
+{
+ "id": "washing-clothes",
+ "title": "Washing Clothes with Grandma",
+ "level": "初级",
+ "number": 15,
+ "duration": 78.0,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "早上好，奶奶！你在做什么呀？",
+  "早上好，宝贝。我在打水。",
+  "我要洗衣服。",
+  "洗衣服？我可以帮忙吗？",
+  "好呀，过来帮我。",
+  "一、二，跟着我踩，宝贝。",
+  "宝贝。",
+  "现在搓衣服，搓呀搓，像这样。",
+  "对，很好。我们把衣服漂一漂，哗啦哗啦，现在干净了，把它们拧干。",
+  "我来给你擦擦脸。",
+  "哗！这下你湿啦！",
+  "哦，你这个小淘气！",
+  "你看！衣服都晾起来了！",
+  "太阳很快就晒干了。",
+  "我喜欢跟你一起洗衣服，奶奶。",
+  "我也爱你，宝贝。"
+ ],
+ "vocabulary": [
+  {"term": "wash clothes", "definition": "洗衣服。"},
+  {"term": "rub", "definition": "搓；揉。用手来回摩擦来去污。"},
+  {"term": "rinse", "definition": "漂洗；冲洗掉泡沫。"},
+  {"term": "wring", "definition": "拧干。把衣物里的水挤出来。"},
+  {"term": "hang up", "definition": "挂起来；晾起来。"},
+  {"term": "naughty", "definition": "淘气的；调皮的。长辈带宠溺意味的说法。"},
+  {"term": "wet", "definition": "湿的。"}
+ ]
+}

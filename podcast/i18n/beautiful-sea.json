@@ -1,0 +1,43 @@
+{
+ "id": "beautiful-sea",
+ "title": "Good Morning, Beautiful Sea!",
+ "level": "初级",
+ "number": 9,
+ "duration": 72.3,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "早上好，美丽的大海！",
+  "我们来堆沙堡吧。",
+  "好呀，奶奶！",
+  "先挖沙子。",
+  "用我的小铲子。",
+  "挖呀挖。",
+  "把桶装满沙子。",
+  "桶满了。",
+  "很好。现在把沙子拍实。",
+  "拍呀拍，把它拍平。",
+  "准备好了吗？我们把它提起来。",
+  "一、二、三——",
+  "哇！一座漂亮的城堡！",
+  "我找到一些贝壳。",
+  "把它们放在沙堡上。",
+  "真好看。",
+  "哦，浪来了！",
+  "你看，一只小螃蟹！",
+  "你好呀，小螃蟹！",
+  "该喝椰子汁啦！",
+  "真好喝！我爱大海！",
+  "我们明天还可以再来玩。"
+ ],
+ "vocabulary": [
+  {"term": "sandcastle", "definition": "沙堡。用沙子堆成的城堡。"},
+  {"term": "dig", "definition": "挖；掘。"},
+  {"term": "shovel", "definition": "铲子。"},
+  {"term": "bucket", "definition": "桶。"},
+  {"term": "pat", "definition": "轻拍；拍实。"},
+  {"term": "shell", "definition": "贝壳。"},
+  {"term": "wave", "definition": "海浪；波浪。"},
+  {"term": "crab", "definition": "螃蟹。"},
+  {"term": "coconut juice", "definition": "椰子汁；椰汁。"}
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "id": "learn-to-ride",
+ "title": "Grandma, Teach Me to Ride!",
+ "level": "初级",
+ "number": 13,
+ "duration": 77.3,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。转写把 brake 听成 break，译文已按刹车处理。",
+ "cues": [
+  "哇！救命！它晃来晃去！",
+  "我来教你。",
+  "好！教我骑车！",
+  "保持平衡，慢慢踩。",
+  "慢慢踩。我可以的。",
+  "你看！现在不晃了。",
+  "哎呀！怎么停下来？",
+  "下次轻轻刹车，宝贝。",
+  "刹车！我知道怎么刹车。",
+  "我做得好吗，奶奶？",
+  "哇！我自己骑起来了！",
+  "太棒了！你做得非常好！",
+  "你们好呀，小鸡们！",
+  "哎呀！两只手都要扶着车把。",
+  "扶稳了！小心！",
+  "风吹着真舒服。",
+  "我喜欢骑自行车。",
+  "我现在骑得可好了。",
+  "我真为你骄傲。",
+  "谢谢你，奶奶。",
+  "我也爱你。"
+ ],
+ "vocabulary": [
+  {"term": "wobbly", "definition": "摇晃的；不稳的。"},
+  {"term": "balance", "definition": "平衡。骑车时保持不倒。"},
+  {"term": "pedal", "definition": "踩踏板；蹬。"},
+  {"term": "brake", "definition": "刹车。"},
+  {"term": "handlebar", "definition": "自行车车把。"},
+  {"term": "hold tight", "definition": "抓紧；扶稳。"},
+  {"term": "be proud of", "definition": "为……感到骄傲。"}
+ ]
+}

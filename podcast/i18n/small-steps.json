@@ -1,0 +1,30 @@
+{
+ "id": "small-steps",
+ "title": "The Smallest Steps Take You the Farthest",
+ "level": "初级",
+ "number": 2,
+ "duration": 43.8,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "有时候，想要取得进步，你不必去跨越什么高山。",
+  "最小的步子，反而能带你走得最远。",
+  "很多人放弃梦想，是因为盯着整段旅程看，觉得不堪重负，",
+  "却忘了每一项了不起的成就，都是靠微小而持续的行动堆起来的。",
+  "也许明天、甚至下周你都看不到变化，但只要你持续出现，",
+  "一直做那些真正重要的小事，总有一天你会醒来时发现，自己走得比想象中远得多。",
+  "关键不在于完美，而在于坚持。",
+  "每一次你选择继续而不是放弃，你都在积累力量、韧劲，以及继续追逐所爱的信心。",
+  "不要低估一步的力量。",
+  "今天的小小努力，就是明天的大成功。"
+ ],
+ "vocabulary": [
+  {"term": "progress", "definition": "进步；进展。向目标靠近的过程。"},
+  {"term": "leap mountains", "definition": "跨越群山。比喻完成极其艰巨的任务。"},
+  {"term": "overwhelmed", "definition": "不堪重负的；被压垮的。觉得任务太大而无力应对。"},
+  {"term": "achievement", "definition": "成就；成绩。通过努力取得的结果。"},
+  {"term": "consistent", "definition": "持续的；一贯的。长期稳定地做同一件事。"},
+  {"term": "persistent", "definition": "坚持不懈的。遇到困难也不放弃。"},
+  {"term": "resilience", "definition": "韧性；复原力。受挫后能重新站起来的能力。"},
+  {"term": "underestimate", "definition": "低估。对某事物的价值或力量估计不足。"}
+ ]
+}

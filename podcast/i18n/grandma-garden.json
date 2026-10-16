@@ -1,0 +1,38 @@
+{
+ "id": "grandma-garden",
+ "title": "Grandma's Garden Is Waking Up",
+ "level": "初级",
+ "number": 12,
+ "duration": 77.1,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "奶奶的菜园醒来了。",
+  "早上好，奶奶。你要去哪儿？",
+  "早上好，宝贝。我去摘菜。",
+  "摘菜？我想跟你一起去！",
+  "好啊，我们去菜园吧。",
+  "你看！这些是新鲜的红番茄。",
+  "哇，看起来真好。",
+  "这些是绿黄瓜。我们摘吧。",
+  "摘呀摘。是这样吗？",
+  "对，做得好。",
+  "我们来拔胡萝卜和洋葱。",
+  "拔呀拔。好重呀。",
+  "你看那西兰花。我们摘一些吧。",
+  "好大的西兰花！放进篮子里。",
+  "做得真棒。",
+  "你看！好多蔬菜呀。",
+  "真好吃。我喜欢跟你在一起。",
+  "我也爱你，奶奶。"
+ ],
+ "vocabulary": [
+  {"term": "garden", "definition": "菜园；花园。"},
+  {"term": "vegetable", "definition": "蔬菜。"},
+  {"term": "tomato", "definition": "番茄；西红柿。"},
+  {"term": "cucumber", "definition": "黄瓜。"},
+  {"term": "carrot", "definition": "胡萝卜。"},
+  {"term": "onion", "definition": "洋葱。"},
+  {"term": "broccoli", "definition": "西兰花。"},
+  {"term": "basket", "definition": "篮子。"}
+ ]
+}

@@ -1,0 +1,39 @@
+{
+ "id": "pick-corn",
+ "title": "Let's Pick Corn!",
+ "level": "初级",
+ "number": 4,
+ "duration": 65.0,
+ "note": "用户提供音频（TikTok），whisper large-v3-turbo 转写 + 人工翻译校对。",
+ "cues": [
+  "躲猫猫！",
+  "找到你啦，宝贝！",
+  "我们去摘玉米吧！",
+  "我们可以摘这个吗？",
+  "这个小家伙还没长好呢。",
+  "嗯……快长大吧，小玉米！",
+  "哇！好大呀！",
+  "先拧一下，再往外拔。",
+  "我摘下来啦！",
+  "慢慢把皮剥开。",
+  "剥呀剥，剥呀剥。",
+  "你看，我长了大胡子！",
+  "我可以烤它吗？",
+  "可以，慢慢转着烤。",
+  "我是小厨师。",
+  "火苗在跳舞。",
+  "嗯，闻起来好香。",
+  "先吹一吹。",
+  "嗯，真好吃！"
+ ],
+ "vocabulary": [
+  {"term": "peek-a-boo", "definition": "躲猫猫。逗小孩玩的游戏，也是英语里逗宝宝时的口头语。"},
+  {"term": "corn", "definition": "玉米。"},
+  {"term": "twist", "definition": "拧；扭。这里指把玉米拧下来。"},
+  {"term": "peel", "definition": "剥皮；削皮。"},
+  {"term": "beard", "definition": "胡须。这里指剥开的玉米须，像大胡子。"},
+  {"term": "roast", "definition": "烤。用火直接烘烤食物。"},
+  {"term": "chef", "definition": "厨师。"},
+  {"term": "yummy", "definition": "好吃的。儿语说法。"}
+ ]
+}
