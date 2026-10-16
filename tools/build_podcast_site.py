@@ -73,11 +73,22 @@ def main():
     os.makedirs(d_audio, exist_ok=True)
     os.makedirs(os.path.join(dest, "static"), exist_ok=True)
 
-    # ---------- 轻量索引（全部 111 课）----------
+    # ---------- 轻量索引 ----------
+    # 索引里只放「可播放」的课程：抽样进仓库的源站课程 + 仓库本地的自定义课程。
+    # 未上线的课程不再出现在列表里（历史上会灰显，现已移除）。
     slim = []
     for c in all_courses:
         cid = c["id"]
+        if cid not in sample_set:
+            continue
         vocab = c.get("vocabulary") or []
+        tr_vocab = None
+        p = os.path.join(dest, "podcast", "i18n", f"{cid}.json")
+        if os.path.exists(p):
+            try:
+                tr_vocab = (json.load(open(p, encoding="utf-8")) or {}).get("vocabulary")
+            except Exception:  # noqa: BLE001
+                tr_vocab = None
         slim.append({
             "id": cid,
             "level": c.get("level") or "",
@@ -85,9 +96,45 @@ def main():
             "title": c.get("title") or "",
             "duration": round(float(c.get("duration") or 0), 2),
             "cueCount": len(c.get("cues") or []),
-            "vocabCount": len(vocab),
-            "local": cid in sample_set,
+            "vocabCount": len(tr_vocab) if tr_vocab else len(vocab),
+            "audio": f"{args.audio_base}{cid}.m4a",
+            "local": True,
+            "origin": "source",
         })
+
+    # 仓库本地的自定义课程（音频/LRC 直接放在仓库里）
+    local_manifest = os.path.join(dest, "podcast", "local-courses.json")
+    local_courses = []
+    if os.path.exists(local_manifest):
+        try:
+            local_courses = (json.load(open(local_manifest, encoding="utf-8")) or {}).get("courses") or []
+        except Exception as e:  # noqa: BLE001
+            print(f"      ! podcast/local-courses.json 解析失败：{e}")
+    for c in local_courses:
+        cid = c.get("id")
+        if not cid:
+            continue
+        audio_rel = c.get("audio") or f"podcast/audio/{cid}.mp3"
+        if not os.path.exists(os.path.join(dest, audio_rel)):
+            print(f"      ! 本地课程 {cid} 的音频不存在：{audio_rel}，已跳过")
+            continue
+        lrc_rel = c.get("lrc") or f"podcast/lrc/{cid}.lrc"
+        cue_count = c.get("cueCount")
+        if cue_count is None and os.path.exists(os.path.join(dest, lrc_rel)):
+            cue_count = sum(1 for l in open(os.path.join(dest, lrc_rel), encoding="utf-8") if l.strip())
+        slim.append({
+            "id": cid,
+            "level": c.get("level") or "初级",
+            "number": c.get("number") or 0,
+            "title": c.get("title") or cid,
+            "duration": round(float(c.get("duration") or 0), 2),
+            "cueCount": cue_count or 0,
+            "vocabCount": len(c.get("vocabulary") or []),
+            "audio": audio_rel,
+            "local": True,
+            "origin": "local",
+        })
+
     # 按等级 → 课号排序，方便列表页直接渲染
     level_order = {"初级": 0, "中级": 1, "高级": 2}
     slim.sort(key=lambda x: (level_order.get(x["level"], 9), x["number"] or 0, x["id"]))
@@ -95,7 +142,6 @@ def main():
     payload = {
         "audioBase": args.audio_base,
         "lrcBase": "podcast/lrc/",
-        "sampleCount": len(sample),
         "totalCount": len(slim),
         "courses": slim,
     }
@@ -106,7 +152,8 @@ def main():
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
         f.write(";\n")
     print(f"[1/3] 索引 -> {os.path.relpath(out_js, dest)}  "
-          f"（{len(slim)} 课，其中本地可播 {len(sample)} 课，"
+          f"（{len(slim)} 课，全部可播放；其中源站抽样 {len(sample)} 课、"
+          f"本地课程 {len(local_courses)} 课，"
           f"{os.path.getsize(out_js) / 1024:.0f} KB）")
 
     # ---------- 抽样课程的字幕 / 音频 / 词汇 ----------
@@ -166,6 +213,16 @@ def main():
         else:
             missing.append(cid)
 
+    # 本地课程的词汇也写进 vocabulary.json
+    for c in local_courses:
+        cid = c.get("id")
+        vocab = c.get("vocabulary") or []
+        if cid and vocab:
+            vocab_out[cid] = [
+                {"term": v.get("term") or "", "definition": v.get("definition") or ""}
+                for v in vocab if v.get("term")
+            ]
+
     out_vocab = os.path.join(dest, "podcast", "vocabulary.json")
     with open(out_vocab, "w", encoding="utf-8") as f:
         json.dump(vocab_out, f, ensure_ascii=False, indent=1)
@@ -173,7 +230,8 @@ def main():
           f"（{sum(len(v) for v in vocab_out.values())} 个词条）")
 
     total = sum(os.path.getsize(os.path.join(d_audio, f))
-                for f in os.listdir(d_audio) if f.endswith(".m4a"))
+                for f in os.listdir(d_audio)
+                if os.path.isfile(os.path.join(d_audio, f)) and not f.startswith("."))
     print(f"[3/3] 复制完成：字幕 {copied_lrc} 个（其中 {translated} 个含中文译文）"
           f" / 音频 {copied_audio} 个（{total / 1048576:.1f} MB）")
     if missing:

@@ -102,10 +102,10 @@
 
             emptyEl.hidden = visible.length > 0;
 
-            const playableCount = courses.filter((c) => c.local !== false).length;
+            const totalMinutes = Math.round(courses.reduce((s, c) => s + (Number(c.duration) || 0), 0) / 60);
             summaryEl.innerHTML = `共 <strong>${courses.length}</strong> 节课，`
                 + `当前显示 <strong>${visible.length}</strong> 节，`
-                + `已上线可播放 <strong>${playableCount}</strong> 节`;
+                + `总时长约 <strong>${totalMinutes}</strong> 分钟`;
         }
 
         if (tabsEl) {

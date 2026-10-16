@@ -103,8 +103,9 @@
             }
             const audioBase = (podcastConfig && podcastConfig.audioBase) || 'podcast/audio/';
             const lrcBase = (podcastConfig && podcastConfig.lrcBase) || 'podcast/lrc/';
-            mp3Src = `${audioBase}${podcastId}.m4a`;
-            lrcSrc = `${lrcBase}${podcastId}.lrc`;
+            // 索引里带完整路径（支持 mp3/m4a 等不同格式），缺失时按 id 推导
+            mp3Src = currentPodcastCourse.audio || `${audioBase}${podcastId}.m4a`;
+            lrcSrc = currentPodcastCourse.lrc || `${lrcBase}${podcastId}.lrc`;
             bookScr = 'podcast.html';
             bookImgSrc = 'images/podcast.svg';
             fallbackAlbum = `English Pod · ${currentPodcastCourse.level || ''}`.trim();

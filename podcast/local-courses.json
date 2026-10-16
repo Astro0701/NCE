@@ -1,0 +1,32 @@
+{
+ "_note": "仓库本地的播客课程（音频/LRC 直接放在仓库里，不依赖源站数据）。新增课程时在这里加一条，然后重跑 tools/build_podcast_site.py。",
+ "courses": [
+  {
+   "id": "daily-speaking",
+   "level": "初级",
+   "number": 1,
+   "title": "Train Your Brain to Speak English Every Day",
+   "duration": 136.82,
+   "audio": "podcast/audio/daily-speaking.mp3",
+   "lrc": "podcast/lrc/daily-speaking.lrc",
+   "vocabulary": [
+    {"term": "habit", "definition": "习惯。反复做而变成自然的行为，这里指英语要靠习惯养成而非死记。"},
+    {"term": "grammar", "definition": "语法。语言的组织规则，作者强调英语不只是语法。"},
+    {"term": "natural", "definition": "自然的；不费力的。形容说英语像本能一样流畅。"},
+    {"term": "podcast", "definition": "播客。可以随时收听的口语节目，适合练听力。"},
+    {"term": "perfection", "definition": "完美。作者强调目标是练习，不是追求完美。"},
+    {"term": "powerful", "definition": "有力的；很有效的。形容某个方法效果显著。"},
+    {"term": "in your mind", "definition": "在心里；在脑海中。指不出声地在脑子里用英语表达。"},
+    {"term": "repetition", "definition": "重复。反复接触同一内容，是记忆的关键。"},
+    {"term": "shadowing", "definition": "影子跟读。听到一句立刻跟着重复，模仿发音与节奏的练习法。"},
+    {"term": "pronunciation", "definition": "发音。单词或句子的读音方式。"},
+    {"term": "rhythm", "definition": "节奏。说话时轻重缓急的韵律感。"},
+    {"term": "confidence", "definition": "自信。敢于开口、不怕出错的心态。"},
+    {"term": "native speaker", "definition": "母语者。从小使用该语言长大的人。"},
+    {"term": "be afraid of", "definition": "害怕；畏惧。这里指不要怕犯错。"},
+    {"term": "consistent", "definition": "持续的；坚持不懈的。每天稳定投入，而不是三天打鱼两天晒网。"},
+    {"term": "grow", "definition": "成长；进步。指能力在反复练习中提升。"}
+   ]
+  }
+ ]
+}
