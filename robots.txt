@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: /sitemap.xml
+Sitemap: https://astro0701.github.io/NCE/sitemap.xml
