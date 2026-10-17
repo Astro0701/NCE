@@ -70,6 +70,10 @@
 
         function render() {
             const progress = readProgress();
+            const utils = window.NCEUtils;
+            const studyCounts = (utils && typeof utils.getLessonStudyCounts === 'function')
+                ? utils.getLessonStudyCounts('PODCAST')
+                : {};
             const visible = courses.filter(matches);
 
             listEl.innerHTML = visible.map((course) => {
@@ -82,6 +86,10 @@
                 ];
                 if (prog && prog.position > 3) {
                     meta.push(`<span>已听至 ${formatDuration(prog.position)}</span>`);
+                }
+                const studyCount = Number(studyCounts[course.id]) || 0;
+                if (studyCount > 0) {
+                    meta.push(`<span>已学习 ${studyCount} 次</span>`);
                 }
 
                 const inner = `
@@ -128,5 +136,12 @@
         }
 
         render();
+
+        // 从课程页返回（含 bfcache 恢复）时刷新学习次数
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                render();
+            }
+        });
     });
 })();

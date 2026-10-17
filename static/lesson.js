@@ -126,6 +126,14 @@
             fallbackTitle = lessonSlug;
         }
 
+        /** 学习次数：按「课本 + 课时」记录，打开本课并实际播放音频记一次 */
+        const studyBookToken = isCustomLesson
+            ? customBookName
+            : (isPodcastLesson ? 'PODCAST' : defaultBookToken);
+        const studyLessonId = isCustomLesson
+            ? ((currentLessonMeta && currentLessonMeta.filename) || '')
+            : (isPodcastLesson ? currentPodcastCourse.id : lessonSlug);
+
 
         /** DOM 引用 */
         const audio = document.getElementById('player');
@@ -913,6 +921,41 @@
             utils.startStudyTimer({
                 module: 'lesson',
                 isEngaged: () => !!audio && !audio.paused && !audio.ended
+            });
+        }
+
+        /** -------------------------------------------------
+         *  课程学习次数
+         *  打开本课并实际播放音频记一次（每次访问至多记一次），
+         *  课本列表与课程页头部展示累计次数。
+         * ------------------------------------------------- */
+        const lessonStudyCountEl = document.getElementById('lesson-study-count');
+        let lessonStudyRecorded = false;
+
+        function renderLessonStudyCount(count) {
+            if (!lessonStudyCountEl) {
+                return;
+            }
+            const times = Math.max(0, Math.floor(Number(count) || 0));
+            lessonStudyCountEl.textContent = times > 0 ? `已学习 ${times} 次` : '还未学习';
+            lessonStudyCountEl.classList.toggle('is-empty', times <= 0);
+            lessonStudyCountEl.hidden = false;
+        }
+
+        if (studyLessonId && typeof utils.getLessonStudyCount === 'function') {
+            renderLessonStudyCount(utils.getLessonStudyCount(studyBookToken, studyLessonId));
+        }
+
+        if (studyLessonId && typeof utils.recordLessonStudy === 'function') {
+            audio.addEventListener('play', () => {
+                if (lessonStudyRecorded) {
+                    return;
+                }
+                lessonStudyRecorded = true;
+                const count = utils.recordLessonStudy(studyBookToken, studyLessonId);
+                if (count > 0) {
+                    renderLessonStudyCount(count);
+                }
             });
         }
 

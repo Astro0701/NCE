@@ -13,7 +13,20 @@
         let defaultLessonsData = {};
         let customLessonsData = {};
         let customBookNames = [];
-        const history = JSON.parse(localStorage.getItem('ncePlaybackHistory') || '[]');
+        let history = JSON.parse(localStorage.getItem('ncePlaybackHistory') || '[]');
+
+        /** 重新读取最近播放记录（从课程页返回时列表要显示最新的 last-read） */
+        function refreshStoredHistory() {
+            history = JSON.parse(localStorage.getItem('ncePlaybackHistory') || '[]');
+        }
+
+        /** 读取某本课本各课的学习次数，供列表徽标渲染 */
+        function getLessonStudyCountsFor(bookToken) {
+            if (!utils || typeof utils.getLessonStudyCounts !== 'function') {
+                return {};
+            }
+            return utils.getLessonStudyCounts(bookToken) || {};
+        }
 
         let currentDefaultBook = 1;
         let currentCustomBookIndex = 0;
@@ -80,6 +93,7 @@
             }
             const lastRead = getDefaultLastRead(bookNumber);
             const lastLesson = lastRead ? lastRead.lesson : null;
+            const studyCounts = getLessonStudyCountsFor(`NCE${bookNumber}`);
 
             container.innerHTML = '';
             lessons.forEach((lesson, index) => {
@@ -88,6 +102,7 @@
                     lessonNumber = index * 2 + 1;
                     lessonNumber = `${lessonNumber}&${lessonNumber + 1}`;
                 }
+                const studyCount = Number(studyCounts[lesson.filename]) || 0;
                 const element = document.createElement('a');
                 element.href = `lesson.html#NCE${bookNumber}/${encodeURIComponent(lesson.filename)}`;
                 element.className = 'lesson-item';
@@ -97,6 +112,7 @@
                 element.innerHTML = `
                     <span class="lesson-number">第${lessonNumber}课</span>
                     <span class="lesson-title">${escapeHtml(lesson.title)}</span>
+                    <span class="lesson-study-badge${studyCount > 0 ? '' : ' is-empty'}">${studyCount > 0 ? `已学习 ${studyCount} 次` : '未学习'}</span>
                 `;
                 container.appendChild(element);
             });
@@ -237,14 +253,17 @@
                     lastIndex = parsed;
                 }
             }
+            const studyCounts = getLessonStudyCountsFor(targetName);
 
             lessons.forEach((lesson, lessonIdx) => {
                 const item = document.createElement('a');
                 item.className = 'lesson-item';
                 item.href = `lesson.html#CUSTOM/${encodeURIComponent(targetName)}/${lessonIdx}`;
+                const studyCount = Number(studyCounts[lesson.filename]) || 0;
                 item.innerHTML = `
                     <span class="lesson-number">第${lessonIdx + 1}课</span>
                     <span class="lesson-title">${escapeHtml(lesson.title)}</span>
+                    <span class="lesson-study-badge${studyCount > 0 ? '' : ' is-empty'}">${studyCount > 0 ? `已学习 ${studyCount} 次` : '未学习'}</span>
                 `;
                 if (!Number.isNaN(lastIndex) && lastIndex === lessonIdx) {
                     item.classList.add('last-read');
@@ -293,6 +312,27 @@
 
         window.addEventListener('hashchange', () => {
             applyHashView();
+        });
+
+        /** 从课程页返回（含 bfcache 恢复）或切回标签页时，刷新学习次数与最近播放 */
+        function refreshLessonViews() {
+            refreshStoredHistory();
+            renderAllDefaultLessons();
+            if (customElements && customElements.container.classList.contains('active')) {
+                renderCustomBook(customBookNames[currentCustomBookIndex]);
+            }
+        }
+
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                refreshLessonViews();
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                refreshLessonViews();
+            }
         });
 
         async function loadData() {

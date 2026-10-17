@@ -1091,6 +1091,184 @@
         return { stop, flush, getPending: () => pending };
     }
 
+    /** -------------------------------------------------
+     *  课程学习次数统计
+     *  记录每一课被学习的次数：打开课程页并实际播放音频记一次，
+     *  按「课本 + 课时」存储，数据保存在 localStorage。
+     * ------------------------------------------------- */
+
+    const LESSON_STUDY_KEY = 'nceLessonStudyCount';
+    const LESSON_STUDY_VERSION = 1;
+    const LESSON_STUDY_LIMIT = 1000;
+
+    function createEmptyLessonStudy() {
+        return { version: LESSON_STUDY_VERSION, books: {}, updatedAt: 0 };
+    }
+
+    /**
+     * 净化课本 / 课时标识，空值或超长（异常数据）返回空串。
+     * @param {*} key 原始标识。
+     * @returns {string} 净化后的标识。
+     */
+    function sanitizeLessonStudyKey(key) {
+        const str = String(key == null ? '' : key).trim();
+        if (!str || str.length > 300) {
+            return '';
+        }
+        return str;
+    }
+
+    /**
+     * 读取学习次数数据。任何异常都退化为空数据，避免阻塞页面。
+     * @returns {{version: number, books: Object, updatedAt: number}} 学习次数数据。
+     */
+    function loadLessonStudy() {
+        let stored = null;
+        try {
+            stored = localStorage.getItem(LESSON_STUDY_KEY);
+        } catch (_) {
+            return createEmptyLessonStudy();
+        }
+        if (!stored) {
+            return createEmptyLessonStudy();
+        }
+        try {
+            const parsed = JSON.parse(stored);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                return createEmptyLessonStudy();
+            }
+            const sourceBooks = parsed.books && typeof parsed.books === 'object' && !Array.isArray(parsed.books)
+                ? parsed.books
+                : {};
+            const books = {};
+            const entries = [];
+            Object.keys(sourceBooks).forEach((bookKey) => {
+                const book = sanitizeLessonStudyKey(bookKey);
+                const sourceLessons = sourceBooks[bookKey];
+                if (!book || !sourceLessons || typeof sourceLessons !== 'object' || Array.isArray(sourceLessons)) {
+                    return;
+                }
+                const lessons = {};
+                Object.keys(sourceLessons).forEach((lessonKey) => {
+                    const lesson = sanitizeLessonStudyKey(lessonKey);
+                    const raw = sourceLessons[lessonKey];
+                    if (!lesson || !raw || typeof raw !== 'object' || Array.isArray(raw)) {
+                        return;
+                    }
+                    const count = Math.floor(Number(raw.count));
+                    if (!Number.isFinite(count) || count <= 0) {
+                        return;
+                    }
+                    const lastAt = Math.floor(Number(raw.lastAt));
+                    lessons[lesson] = { count, lastAt: Number.isFinite(lastAt) ? lastAt : 0 };
+                    entries.push({ book, lesson, lastAt: lessons[lesson].lastAt });
+                });
+                if (Object.keys(lessons).length) {
+                    books[book] = lessons;
+                }
+            });
+            // 超限时丢弃最久未学习的课程
+            if (entries.length > LESSON_STUDY_LIMIT) {
+                entries.sort((a, b) => a.lastAt - b.lastAt);
+                entries.slice(0, entries.length - LESSON_STUDY_LIMIT).forEach(({ book, lesson }) => {
+                    if (books[book]) {
+                        delete books[book][lesson];
+                        if (!Object.keys(books[book]).length) {
+                            delete books[book];
+                        }
+                    }
+                });
+            }
+            return {
+                version: LESSON_STUDY_VERSION,
+                books,
+                updatedAt: Number.isFinite(parsed.updatedAt) ? parsed.updatedAt : 0
+            };
+        } catch (_) {
+            return createEmptyLessonStudy();
+        }
+    }
+
+    /**
+     * 写入学习次数数据。
+     * @param {Object} data 学习次数数据。
+     * @returns {boolean} 是否写入成功。
+     */
+    function saveLessonStudy(data) {
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            return false;
+        }
+        try {
+            localStorage.setItem(LESSON_STUDY_KEY, JSON.stringify(data));
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    /**
+     * 给一课记一次学习（次数 +1）。采用「读取-合并-写回」，多标签页不会互相覆盖。
+     * @param {string} bookToken 课本标识，如 NCE1 / CUSTOM 课本键 / PODCAST。
+     * @param {string} lessonId 课时标识，如音频文件名 / 播客课程 id。
+     * @returns {number} 记录成功返回新次数，失败返回 0。
+     */
+    function recordLessonStudy(bookToken, lessonId) {
+        const book = sanitizeLessonStudyKey(bookToken);
+        const lesson = sanitizeLessonStudyKey(lessonId);
+        if (!book || !lesson) {
+            return 0;
+        }
+        const data = loadLessonStudy();
+        if (!data.books[book]) {
+            data.books[book] = {};
+        }
+        const entry = data.books[book][lesson] || { count: 0, lastAt: 0 };
+        entry.count = Math.floor(Number(entry.count) || 0) + 1;
+        entry.lastAt = Date.now();
+        data.books[book][lesson] = entry;
+        data.updatedAt = Date.now();
+        return saveLessonStudy(data) ? entry.count : 0;
+    }
+
+    /**
+     * 读取一课的累计学习次数。
+     * @param {string} bookToken 课本标识。
+     * @param {string} lessonId 课时标识。
+     * @returns {number} 学习次数（无记录返回 0）。
+     */
+    function getLessonStudyCount(bookToken, lessonId) {
+        const book = sanitizeLessonStudyKey(bookToken);
+        const lesson = sanitizeLessonStudyKey(lessonId);
+        if (!book || !lesson) {
+            return 0;
+        }
+        const data = loadLessonStudy();
+        const entry = data.books[book] && data.books[book][lesson];
+        return entry ? Math.floor(Number(entry.count) || 0) : 0;
+    }
+
+    /**
+     * 读取一本课本下所有课的学习次数，供列表渲染。
+     * @param {string} bookToken 课本标识。
+     * @returns {Object} 形如 { 课时标识: 次数 }，无记录的课时不出现。
+     */
+    function getLessonStudyCounts(bookToken) {
+        const book = sanitizeLessonStudyKey(bookToken);
+        if (!book) {
+            return {};
+        }
+        const data = loadLessonStudy();
+        const source = data.books[book] || {};
+        const result = {};
+        Object.keys(source).forEach((lesson) => {
+            const count = Math.floor(Number(source[lesson] && source[lesson].count) || 0);
+            if (count > 0) {
+                result[lesson] = count;
+            }
+        });
+        return result;
+    }
+
     const utils = {
         hashString,
         escapeForSvg,
@@ -1131,7 +1309,14 @@
         addStudyTime,
         getStudyStats,
         formatStudyDuration,
-        startStudyTimer
+        startStudyTimer,
+        // 课程学习次数统计
+        LESSON_STUDY_KEY,
+        loadLessonStudy,
+        saveLessonStudy,
+        recordLessonStudy,
+        getLessonStudyCount,
+        getLessonStudyCounts
     };
 
     if (typeof window !== 'undefined') {
