@@ -219,6 +219,14 @@
         audio.addEventListener('loadedmetadata', () => {
             console.log('[AUDIO] loadedmetadata - readyState:', audio.readyState, 'duration:', audio.duration);
             markAudioReady('loadedmetadata');
+            // 若字幕比音频先就绪，最后一句的 end 当时只能取兜底值；
+            // 拿到真实时长后校正一次，确保结尾不会因 end 异常而循环。
+            if (Array.isArray(state.data) && state.data.length && Number.isFinite(audio.duration)) {
+                const last = state.data[state.data.length - 1];
+                if (!last.end || last.end <= last.start || last.end > audio.duration + 0.5) {
+                    last.end = audio.duration;
+                }
+            }
         });
         audio.addEventListener('loadeddata', () => {
             console.log('[AUDIO] loadeddata - readyState:', audio.readyState);
@@ -671,6 +679,20 @@
                     }
                     state.data.push({en, cn, start, end});
                 });
+
+                // 最后一句没有「下一行时间戳」，end 会停在 0。
+                // 若保持 0：连续播放时 playSegment(start, 0) 把 state.segmentEnd 置 0，
+                // 紧接着 timeupdate 里的 `if (!state.segmentEnd)` 又把它重新设成上一句的 end，
+                // 两边反复触发 → 在结尾死循环、反复重播最后一句（典型现象：一直重复同一句）。
+                // 这里补一个真实结束时间：优先音频时长，未知则给一个足够大的兜底值。
+                if (state.data.length) {
+                    const last = state.data[state.data.length - 1];
+                    if (!last.end || last.end <= last.start) {
+                        last.end = (Number.isFinite(audio.duration) && audio.duration > last.start)
+                            ? audio.duration
+                            : last.start + 30;
+                    }
+                }
             } catch (error) {
                 console.error('Failed to load LRC:', error);
             }
