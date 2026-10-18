@@ -501,6 +501,64 @@
    "definition": "过程。相对于「结果」而言。"
   }
  ],
+ "stop-when-done": [
+  {
+   "term": "tired",
+   "definition": "累的；疲倦的。"
+  },
+  {
+   "term": "done",
+   "definition": "做完的；完成的。本课核心词：done 是「完成了」，不是「累了」。"
+  },
+  {
+   "term": "comfortable",
+   "definition": "舒服的；舒适的。大脑天生想待在舒服的地方。"
+  },
+  {
+   "term": "progress",
+   "definition": "进步；进展。往前走、变得更好。"
+  },
+  {
+   "term": "prize",
+   "definition": "奖品；奖赏。干完活之后给自己的奖励。"
+  },
+  {
+   "term": "reward",
+   "definition": "回报；奖赏。"
+  },
+  {
+   "term": "proud",
+   "definition": "自豪的；骄傲的。做了件好事之后的感觉。"
+  },
+  {
+   "term": "motivated",
+   "definition": "有动力的；被激励的。"
+  },
+  {
+   "term": "keep going",
+   "definition": "继续下去；别停下。"
+  },
+  {
+   "term": "chapter",
+   "definition": "章节。书里的一章。"
+  },
+  {
+   "term": "earn the rest",
+   "definition": "挣来休息。先干活，休息才理直气壮。"
+  },
+  {
+   "term": "small steps",
+   "definition": "小步。把大目标拆成容易完成的小块。"
+  },
+  {
+   "term": "focus on",
+   "definition": "专注于。"
+  },
+  {
+   "term": "get to done",
+   "definition": "走到「做完」那一步。"
+  }
+ ],
  "daily-speaking": [
   {
    "term": "habit",

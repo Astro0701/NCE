@@ -138,7 +138,7 @@ def main():
             "duration": round(float(c.get("duration") or 0), 2),
             "cueCount": cue_count or 0,
             "vocabCount": len(c.get("vocabulary") or []),
-            "audio": audio_rel,
+            "audio": f"{args.audio_base}{os.path.basename(audio_rel)}",
             "local": True,
             "origin": "local",
         })
