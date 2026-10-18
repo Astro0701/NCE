@@ -176,18 +176,18 @@ git push origin main
 
 ---
 
-## 9. 清理 tape
+## 9. 清理 tape 内容（保留目录）
 
 ```bash
 # 删前必须 MD5 比对，确认仓库已有完全一致的副本
 # 通过后用系统 trash 移入废纸篓（可恢复），不要用 rm
 /usr/bin/trash /Users/wangyuhang/Downloads/NCE/tape/xxx.mp3
-rmdir /Users/wangyuhang/Downloads/NCE/tape   # 空目录才删
 ```
 
 - 只删**本轮已处理完并已推送**的文件
-- 若 tape 里还有没处理的音频，保留目录
-- 顺手删 `.DS_Store`
+- **`tape/` 目录本身要保留，不要 `rmdir`**——用户会一直往这个固定目录里放新录音，
+  目录不存在会打断工作流
+- 顺手删 `.DS_Store`，但目录留着
 
 ---
 
