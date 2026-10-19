@@ -610,6 +610,30 @@
     }
 
     /**
+     * 把词表里的写法转成 TTS 能稳定读对的文本。
+     *
+     * 引擎对「孤立的大写单字母」会走字母名逻辑：`I` 容易被读成 /ɪ/ 或字母名列表音，
+     * `A` 容易被读成 /eɪ/，而不是词表音标里的 /aɪ/、/ə/。
+     * 用音标反查一张小表给出等价的拼写形式，让引擎按普通单词朗读，读音才与页面音标一致。
+     * @param {string} text 词表里的原始写法。
+     * @returns {string} 适合朗读的文本。
+     */
+    const SPEAK_OVERRIDES = {
+        'a': 'a',        // /ə/ 冠词，小写时引擎读弱读形式
+        'i': 'eye',      // /aɪ/ 代词，拼作 eye 保证读 /aɪ/
+        'true': 'true',
+        'false': 'false'
+    };
+
+    function toSpeakable(text) {
+        const key = String(text || '').trim().toLowerCase();
+        if (Object.prototype.hasOwnProperty.call(SPEAK_OVERRIDES, key)) {
+            return SPEAK_OVERRIDES[key];
+        }
+        return String(text || '').trim();
+    }
+
+    /**
      * 朗读单词。使用浏览器内置 TTS，无需网络。
      * @param {string} word 待朗读单词。
      * @param {Object} [options] 配置项。
@@ -617,7 +641,7 @@
      * @returns {boolean} 是否成功发起朗读。
      */
     function speakWord(word, options = {}) {
-        const text = String(word || '').trim();
+        const text = toSpeakable(word);
         if (!text || !canSpeak()) {
             return false;
         }
@@ -1294,6 +1318,7 @@
         clearWordBook,
         normalizeWord,
         speakWord,
+        toSpeakable,
         canSpeak,
         // 随机听写题库
         DICTATION_POOL_KEY,

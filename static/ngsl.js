@@ -2,6 +2,11 @@
    NGSL 核心词表 · 列表逻辑
    数据来自 static/ngsl-data.js：window.NCE_NGSL
    每条形如 [单词, 词频排名, 音标, 中文释义, 英文释义]
+
+   功能：
+   - 区间筛选 + 中英文搜索 + 分块渲染（滚动加载）
+   - 显示模式：中英 / 英文 / 中文（与 lesson.html 行为一致，存 localStorage）
+   - 听写模式：看中文写英文，实时校验，答错显示答案
    ============================================================ */
 
 (function () {
@@ -18,11 +23,17 @@
     /** 每次渲染的条数（2809 条一次性插入会卡，分块追加） */
     var CHUNK = 200;
 
+    /** 显示模式持久化键（与 lesson.html 的 displayMode 分开，互不影响） */
+    var DISPLAY_MODE_KEY = 'ngslDisplayMode';
+
     var listEl = document.getElementById('ngsl-list');
     var summaryEl = document.getElementById('ngsl-summary');
+    var hintEl = document.getElementById('ngsl-hint');
     var emptyEl = document.getElementById('ngsl-empty');
     var searchEl = document.getElementById('ngsl-search');
     var tabsEl = document.getElementById('ngsl-tabs');
+    var modesEl = document.getElementById('ngsl-modes');
+    var dictationEl = document.getElementById('ngsl-dictation');
     var sentinelEl = document.getElementById('ngsl-sentinel');
 
     /** 当前状态 */
@@ -30,12 +41,81 @@
         range: 'all',
         query: '',
         filtered: ALL,
-        rendered: 0
+        rendered: 0,
+        displayMode: 'bilingual-mode',
+        dictation: false
     };
+
+    /** 已答对的词条（按 rank 记），切模式后保留 */
+    var solved = new Set();
 
     var observer = null;
 
-    /** 解析区间 "501-1000" → [501, 1000] */
+    /* ---------------- 显示模式 ---------------- */
+
+    function loadDisplayMode() {
+        var saved = null;
+        try {
+            saved = localStorage.getItem(DISPLAY_MODE_KEY);
+        } catch (e) {
+            saved = null;
+        }
+        var allowed = ['bilingual-mode', 'en-mode', 'cn-mode'];
+        if (saved && allowed.indexOf(saved) !== -1) {
+            state.displayMode = saved;
+        }
+    }
+
+    function applyDisplayMode(mode) {
+        if (!mode) return;
+        state.displayMode = mode;
+        listEl.classList.remove('bilingual-mode', 'en-mode', 'cn-mode');
+        listEl.classList.add(mode);
+
+        if (modesEl) {
+            var btns = modesEl.querySelectorAll('button[data-mode]');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.toggle('active', btns[i].getAttribute('data-mode') === mode);
+            }
+        }
+        try {
+            localStorage.setItem(DISPLAY_MODE_KEY, mode);
+        } catch (e) {
+            /* 忽略写入失败（隐私模式等） */
+        }
+        updateHint();
+    }
+
+    function updateHint() {
+        if (!hintEl) return;
+        if (state.dictation) {
+            hintEl.textContent = '看中文写英文，点输入框可听发音';
+        } else if (state.displayMode === 'cn-mode') {
+            hintEl.textContent = '只显示中文，试着回想英文单词，点任意词条听发音';
+        } else if (state.displayMode === 'en-mode') {
+            hintEl.textContent = '点击任意单词即可朗读';
+        } else {
+            hintEl.textContent = '点击任意单词即可朗读';
+        }
+    }
+
+    /* ---------------- 发音 ---------------- */
+
+    function speak(text, rowEl) {
+        if (!window.NCEUtils || typeof window.NCEUtils.speakWord !== 'function') {
+            return;
+        }
+        if (rowEl) {
+            rowEl.classList.add('is-speaking');
+            window.setTimeout(function () {
+                rowEl.classList.remove('is-speaking');
+            }, 700);
+        }
+        window.NCEUtils.speakWord(text, { rate: 0.9 });
+    }
+
+    /* ---------------- 过滤与渲染 ---------------- */
+
     function parseRange(range) {
         if (!range || range === 'all') return [1, TOTAL];
         var parts = range.split('-');
@@ -46,7 +126,6 @@
         return [lo, hi];
     }
 
-    /** 按区间 + 关键词过滤 */
     function applyFilter() {
         var bounds = parseRange(state.range);
         var q = state.query.trim().toLowerCase();
@@ -84,7 +163,6 @@
         setupObserver();
     }
 
-    /** 更新摘要文字 */
     function updateSummary() {
         var bounds = parseRange(state.range);
         var n = state.filtered.length;
@@ -95,12 +173,23 @@
         if (state.query) {
             text += ' · 关键词「' + state.query + '」';
         }
+        if (state.dictation) {
+            text += ' · 已答对 ' + solved.size;
+        }
         summaryEl.textContent = text;
         emptyEl.hidden = n !== 0;
     }
 
-    /** 创建一条词条 DOM */
-    function createItem(item) {
+    /** 答案比对：忽略大小写、空格与标点，只比字母 */
+    function normalizeAnswer(value) {
+        return String(value || '')
+            .normalize('NFKC')
+            .replace(/[^a-zA-Z]/g, '')
+            .toLowerCase();
+    }
+
+    /** 创建普通词条（非听写） */
+    function createNormalItem(item) {
         var word = item[0];
         var rank = item[1];
         var ipa = item[2];
@@ -138,29 +227,144 @@
         row.appendChild(zhEl);
         row.appendChild(speakEl);
 
-        function speak() {
-            if (!window.NCEUtils || typeof window.NCEUtils.speakWord !== 'function') {
-                return;
-            }
-            row.classList.add('is-speaking');
-            window.setTimeout(function () {
-                row.classList.remove('is-speaking');
-            }, 700);
-            window.NCEUtils.speakWord(word, { rate: 0.9 });
+        function play() {
+            speak(word, row);
         }
-
-        row.addEventListener('click', speak);
+        row.addEventListener('click', play);
         row.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                speak();
+                play();
             }
         });
 
         return row;
     }
 
-    /** 追加渲染一块 */
+    /** 创建听写词条：中文 + 输入框 */
+    function createDictationItem(item) {
+        var word = item[0];
+        var rank = item[1];
+        var ipa = item[2];
+        var zh = item[3];
+
+        var row = document.createElement('div');
+        row.className = 'ngsl-item ngsl-item--dictation';
+        row.setAttribute('role', 'listitem');
+
+        var rankEl = document.createElement('span');
+        rankEl.className = 'ngsl-item__rank';
+        rankEl.textContent = rank;
+
+        var zhEl = document.createElement('span');
+        zhEl.className = 'ngsl-item__zh';
+        zhEl.textContent = zh;
+
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'ngsl-dict-input';
+        input.placeholder = '输入英文单词…';
+        input.autocomplete = 'off';
+        input.autocapitalize = 'off';
+        input.spellcheck = false;
+        input.setAttribute('aria-label', '请输入「' + zh + '」对应的英文单词');
+
+        var speakEl = document.createElement('span');
+        speakEl.className = 'ngsl-item__speak';
+        speakEl.textContent = '🔊';
+        speakEl.style.opacity = '1';
+        speakEl.setAttribute('role', 'button');
+        speakEl.setAttribute('tabindex', '0');
+        speakEl.setAttribute('aria-label', '朗读该单词');
+
+        var answerEl = document.createElement('span');
+        answerEl.className = 'ngsl-dict-answer';
+
+        row.appendChild(rankEl);
+        row.appendChild(zhEl);
+        row.appendChild(input);
+        row.appendChild(speakEl);
+        row.appendChild(answerEl);
+
+        var answer = normalizeAnswer(word);
+
+        // 已答对过的直接回填并标绿
+        if (solved.has(rank)) {
+            input.value = word;
+            input.classList.add('is-correct');
+            input.readOnly = true;
+        }
+
+        function play() {
+            speak(word, row);
+        }
+
+        speakEl.addEventListener('click', function (e) {
+            e.stopPropagation();
+            play();
+        });
+        speakEl.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                play();
+            }
+        });
+
+        // 聚焦即朗读（已答对的不再读）
+        input.addEventListener('focus', function () {
+            if (!solved.has(rank)) play();
+        });
+
+        input.addEventListener('input', function () {
+            if (solved.has(rank)) return;
+            var val = normalizeAnswer(input.value);
+            input.classList.remove('is-correct', 'is-wrong');
+            answerEl.classList.remove('is-visible');
+
+            if (!val) return;
+
+            if (val === answer) {
+                input.classList.add('is-correct');
+                input.readOnly = true;
+                solved.add(rank);
+                updateSummary();
+                // 自动跳到下一个未答对的输入框
+                window.setTimeout(function () {
+                    var next = row.nextElementSibling;
+                    while (next && !next.querySelector('.ngsl-dict-input')) {
+                        next = next.nextElementSibling;
+                    }
+                    if (next) {
+                        var ni = next.querySelector('.ngsl-dict-input');
+                        if (ni && !ni.readOnly) ni.focus();
+                    }
+                }, 220);
+            } else if (answer.indexOf(val) !== 0) {
+                // 已经不是正确答案的前缀 → 判错
+                input.classList.add('is-wrong');
+                answerEl.textContent = '正确答案：' + word;
+                answerEl.classList.add('is-visible');
+            }
+        });
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !input.readOnly) {
+                var val = normalizeAnswer(input.value);
+                if (val && val !== answer) {
+                    input.classList.add('is-wrong');
+                    answerEl.textContent = '正确答案：' + word;
+                    answerEl.classList.add('is-visible');
+                }
+            }
+        });
+
+        return row;
+    }
+
+    function createItem(item) {
+        return state.dictation ? createDictationItem(item) : createNormalItem(item);
+    }
+
     function renderChunk() {
         var total = state.filtered.length;
         if (state.rendered >= total) {
@@ -176,10 +380,8 @@
         state.rendered = end;
     }
 
-    /** 滚动到底部继续加载 */
     function setupObserver() {
         if (!('IntersectionObserver' in window)) {
-            // 不支持时一次性渲染
             while (state.rendered < state.filtered.length) renderChunk();
             return;
         }
@@ -194,7 +396,8 @@
         observer.observe(sentinelEl);
     }
 
-    /** 区间切换 */
+    /* ---------------- 事件绑定 ---------------- */
+
     if (tabsEl) {
         tabsEl.addEventListener('click', function (e) {
             var btn = e.target.closest('button[data-range]');
@@ -209,7 +412,23 @@
         });
     }
 
-    /** 搜索（防抖） */
+    if (modesEl) {
+        modesEl.addEventListener('click', function (e) {
+            var btn = e.target.closest('button[data-mode]');
+            if (!btn) return;
+            applyDisplayMode(btn.getAttribute('data-mode'));
+        });
+    }
+
+    if (dictationEl) {
+        dictationEl.addEventListener('change', function () {
+            state.dictation = dictationEl.checked;
+            listEl.classList.toggle('is-dictation', state.dictation);
+            updateHint();
+            applyFilter();
+        });
+    }
+
     if (searchEl) {
         var timer = null;
         searchEl.addEventListener('input', function () {
@@ -221,6 +440,9 @@
         });
     }
 
-    // 初始化（applyFilter 内部会调用 setupObserver）
+    /* ---------------- 初始化 ---------------- */
+
+    loadDisplayMode();
+    applyDisplayMode(state.displayMode);
     applyFilter();
 })();

@@ -54,11 +54,24 @@
                placeholder="搜索单词或中文释义…" aria-label="搜索单词或中文释义" autocomplete="off">
     </div>
 
+    <div class="ngsl-subbar">
+        <div class="ngsl-modes" id="ngsl-modes" role="group" aria-label="显示模式">
+            <button type="button" data-mode="bilingual-mode" class="active">中英</button>
+            <button type="button" data-mode="en-mode">英文</button>
+            <button type="button" data-mode="cn-mode">中文</button>
+        </div>
+        <label class="ngsl-dictation">
+            <input type="checkbox" id="ngsl-dictation">
+            <span class="ngsl-dictation__track"><span class="ngsl-dictation__knob"></span></span>
+            <span class="ngsl-dictation__text">听写模式</span>
+        </label>
+    </div>
+
     <p class="ngsl-summary" id="ngsl-summary"></p>
     <p class="ngsl-hint" id="ngsl-hint">点击任意单词即可朗读</p>
     <hr>
 
-    <div class="ngsl-list" id="ngsl-list" role="list"></div>
+    <div class="ngsl-list bilingual-mode" id="ngsl-list" role="list"></div>
     <div class="ngsl-sentinel" id="ngsl-sentinel" aria-hidden="true"></div>
     <p class="ngsl-empty" id="ngsl-empty" hidden>没有匹配的单词，换个关键词试试。</p>
 </div>
