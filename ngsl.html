@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NGSL 新通用服务词表 2809 词，按词频排序，附美式音标、中文释义与发音，覆盖约 92% 日常英语。">
+    <meta name="keywords" content="NGSL,新通用服务词表,英语高频词,核心词汇,音标,英语单词表">
+    <link rel="canonical" href="https://astro0701.github.io/NCE/ngsl.html">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:site_name" content="新概念英语在线点读">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="NGSL 核心词表 · 2809 词">
+    <meta property="og:description" content="按词频排序的 NGSL 2809 核心词，附美式音标、中文释义与发音，覆盖约 92% 日常英语。">
+    <meta property="og:url" content="https://astro0701.github.io/NCE/ngsl.html">
+    <meta property="og:image" content="https://astro0701.github.io/NCE/static/ogimage.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="NGSL 核心词表界面">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="NGSL 核心词表 · 2809 词">
+    <meta name="twitter:description" content="按词频排序的 NGSL 2809 核心词，附美式音标、中文释义与发音。">
+    <meta name="twitter:image" content="https://astro0701.github.io/NCE/static/ogimage.jpg">
+    <meta name="theme-color" content="#e8e8e8">
+    <title>NGSL 核心词表 - 2809 词（音标·释义·发音）</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/base.css">
+    <link rel="stylesheet" href="static/ngsl.css">
+    <script src="static/utils.js"></script>
+    <script src="static/ngsl-data.js"></script>
+    <script src="static/ngsl.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <a href="index.html">
+        <div class="header">
+            <h1>NGSL 核心词表</h1>
+            <p>2809 词 · 按词频排序</p>
+        </div>
+    </a>
+</div>
+
+<div class="book-container">
+    <div class="ngsl-toolbar">
+        <div class="ngsl-tabs" id="ngsl-tabs" role="tablist">
+            <button type="button" data-range="all" class="active" role="tab">全部</button>
+            <button type="button" data-range="1-500" role="tab">1–500</button>
+            <button type="button" data-range="501-1000" role="tab">501–1000</button>
+            <button type="button" data-range="1001-1500" role="tab">1001–1500</button>
+            <button type="button" data-range="1501-2000" role="tab">1501–2000</button>
+            <button type="button" data-range="2001-2809" role="tab">2001–2809</button>
+        </div>
+        <input id="ngsl-search" class="ngsl-search" type="search"
+               placeholder="搜索单词或中文释义…" aria-label="搜索单词或中文释义" autocomplete="off">
+    </div>
+
+    <p class="ngsl-summary" id="ngsl-summary"></p>
+    <p class="ngsl-hint" id="ngsl-hint">点击任意单词即可朗读</p>
+    <hr>
+
+    <div class="ngsl-list" id="ngsl-list" role="list"></div>
+    <div class="ngsl-sentinel" id="ngsl-sentinel" aria-hidden="true"></div>
+    <p class="ngsl-empty" id="ngsl-empty" hidden>没有匹配的单词，换个关键词试试。</p>
+</div>
+
+<footer>
+    <hr>
+    <p class="ngsl-credit">
+        词表：NGSL 1.2 · Browne &amp; Culligan (2013) · CC BY-SA ·
+        <a href="https://www.newgeneralservicelist.com" target="_blank" rel="noopener">newgeneralservicelist.com</a>
+    </p>
+    <p>© 2025 <a target="_blank" href="https://www.hoothin.com">hoothin</a>.</p>
+</footer>
+</body>
+</html>
