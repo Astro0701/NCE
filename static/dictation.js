@@ -296,7 +296,9 @@
             lines.forEach((raw, i) => {
                 const m = raw.trim().match(lineRe);
                 if (!m) return;
-                const start = parseInt(m[1], 10) * 60 + parseFloat(m[2]) - 0.5;
+                // 不做整体偏移：字幕时间轴本身是准的，减 0.5 秒会让每句都从
+                // 上一句的尾巴开始播，听写时会听到多余的音。（同 lesson.js）
+                const start = parseInt(m[1], 10) * 60 + parseFloat(m[2]);
                 const parts = (m[3] || '').split('|');
                 const en = (parts[0] || '').trim();
                 const cn = (parts[1] || '').trim();
@@ -305,7 +307,7 @@
                 for (let j = i + 1; j < lines.length; j += 1) {
                     const nxt = lines[j].match(timeRe);
                     if (nxt) {
-                        end = parseInt(nxt[1], 10) * 60 + parseFloat(nxt[2]) - 0.5;
+                        end = parseInt(nxt[1], 10) * 60 + parseFloat(nxt[2]);
                         break;
                     }
                 }

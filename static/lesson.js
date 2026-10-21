@@ -546,7 +546,11 @@
          * ------------------------------------------------- */
         function parseTime(tag) {
             const m = TIME_RE.exec(tag);
-            return m ? parseInt(m[1], 10) * 60 + parseFloat(m[2]) -0.5 : 0;
+            // 不要在这里做任何整体偏移。历史提交 bef2c73「All move forward 0.5s」
+            // 曾统一减 0.5 秒，本意是补偿旧播放器的起播延迟，但实测各册字幕
+            // 时间轴本身就是准的（句首前 250ms 基本是静音），减 0.5 秒会让每句
+            // 都先从上一句的尾巴开始播，听感就是「每句开头磕磕巴巴」。
+            return m ? parseInt(m[1], 10) * 60 + parseFloat(m[2]) : 0;
         }
 
         /** ------------------------------------------------- 
@@ -745,7 +749,11 @@
         let lastSeekTime = 0;
         const SEEK_DEBOUNCE_MS = 300; // 防抖间隔：300ms内的重复seek会被忽略（避免服务器过载）
         
-        function playSegment(start, end) {
+        function playSegment(start, end, options = {}) {
+            // internal=true 表示播放器内部（连续播放）发起的切句。
+            // 这种调用必须立刻执行：句尾判定本身就晚于真实边界，
+            // 再叠加 300ms 防抖会让句子之间出现明显空档。
+            const internal = options.internal === true;
             if (!audioReady && !audio.error) {
                 console.warn('[PLAY] Audio not marked ready yet, attempting playback anyway');
                 if (audio.networkState === audio.NETWORK_IDLE || audio.readyState === 0) {
@@ -755,7 +763,7 @@
             
             const now = Date.now();
             // 防抖：如果距离上次seek太近，先记录位置但延迟执行
-            if (now - lastSeekTime < SEEK_DEBOUNCE_MS) {
+            if (!internal && now - lastSeekTime < SEEK_DEBOUNCE_MS) {
                 console.log('[PLAY] Seek too fast, debouncing...');
                 // 取消之前的延迟执行
                 if (pendingPlayRequest && pendingPlayRequest.debounceTimeout) {
@@ -1581,17 +1589,34 @@
                         }
                         break;
                     case 'continuous':
-                    case 'ab-loop':
+                    case 'ab-loop': {
                         const nextIdx = state.activeIdx + 1;
                         if (state.activeIdx !== -1 && nextIdx < state.data.length) {
-                            const {start, end} = state.data[nextIdx];
-                            playSegment(start, end);
+                            const nextSentence = state.data[nextIdx];
+                            const nextStart = nextSentence.start;
+                            const nextEnd = nextSentence.end;
+                            // 字幕里 end(N) 恒等于 start(N+1)，而 timeupdate 在移动端只有
+                            // ~250ms（省电模式更粗）的粒度，回调触发时播放头往往已经越过
+                            // 下一句起点一小段。若此时执行 currentTime = nextStart，就是一次
+                            // 「向后 seek」：MP3 解码器要重新同步，上一句的尾音被重放一截，
+                            // 听感正是「每句开头磕磕巴巴」。只要播放头仍落在下一句区间内，
+                            // 就原地续播，完全不碰 currentTime。
+                            if (cur >= nextStart && cur < nextEnd) {
+                                state.segmentEnd = nextEnd;
+                                highlight(nextIdx);
+                                if (audio.paused) {
+                                    audio.play().catch(() => {});
+                                }
+                                return;
+                            }
+                            playSegment(nextStart, nextEnd, { internal: true });
                             shouldReturn = false; // Allow highlight to update
                         } else {
                             audio.pause();
                             state.segmentEnd = 0;
                         }
                         break;
+                    }
                 }
                 if (shouldReturn) return;
             }
