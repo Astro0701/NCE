@@ -15,6 +15,12 @@ class ParticleBackground {
         this.particles = [];
         this.particleCount = 12;
         this.mouse = { x: null, y: null, radius: 250 };
+        // 纸色缓存：跟随 --paper 令牌，深浅色切换后失效重读
+        this.baseColorValue = null;
+        const colorSchemeQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        if (colorSchemeQuery && typeof colorSchemeQuery.addEventListener === 'function') {
+            colorSchemeQuery.addEventListener('change', () => { this.baseColorValue = null; });
+        }
 
         // 柔和粉彩色系（与 Soft UI 调色板一致）
         this.colorData = [
@@ -130,7 +136,17 @@ class ParticleBackground {
     resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.baseColorValue = null;
         this.updateExcludedZones();
+    }
+
+    /** 读取当前主题的纸色（--paper），读取失败退回暖纸色 */
+    getBaseColor() {
+        if (!this.baseColorValue) {
+            const value = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+            this.baseColorValue = value || '#F5F3EE';
+        }
+        return this.baseColorValue;
     }
 
     createParticles() {
@@ -306,8 +322,8 @@ class ParticleBackground {
         // 性能检测
         this.checkPerformance();
 
-        // 完全清空画布（浅色底）
-        this.ctx.fillStyle = '#e8e8e8';
+        // 完全清空画布（跟随主题纸色）
+        this.ctx.fillStyle = this.getBaseColor();
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         // 绘制连接线

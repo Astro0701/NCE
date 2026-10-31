@@ -1,12 +1,13 @@
 /* ============================================================
-   课文点读页样式（播放器 / 句子 / 错题本 / 划词浮层 / 分享）
+   课文点读页样式（播放器 / 句子 / 听写 / 错题本 / 划词浮层 / 分享）
+   Paper + Ink + Clay：课文按句排版，当前句赤陶底色；播放条为底部细线白条
    ============================================================ */
 
 #content {
     scroll-behavior: smooth;
     flex: 1;
     overflow-y: auto;
-    padding: 10px 5% 200px;
+    padding: 6px 0 220px;
     min-height: 0;
 }
 
@@ -14,52 +15,73 @@
 #book {
     text-decoration: none;
     display: block;
-    border-radius: var(--radius-md);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--r);
     position: relative;
 }
 
-#book:hover {
-    transform: translateY(-2px);
+#book .book-header {
+    justify-content: flex-start;
+    text-align: left;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
 }
 
-#book:hover .book-header img {
-    transform: scale(1.06);
-    box-shadow: var(--shadow-flat);
+#book .book-header img {
+    max-width: 54px;
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line);
+    flex-shrink: 0;
 }
 
-#book:hover .book-title h3 {
-    color: var(--primary-color);
+#book .book-title {
+    flex: 1;
+    min-width: 0;
 }
 
-#book:hover .book-title p {
-    color: var(--text-color);
+#book .book-title hr {
+    display: none;
 }
 
-.book-header img {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+#book .book-title h3 {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    color: var(--ink-4);
+    transition: color 0.2s ease;
 }
 
-.book-title h3 {
-    transition: color 0.3s ease;
+#book .book-title #lesson-title {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -.015em;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-top: 2px;
+    transition: color 0.2s ease;
 }
 
-.book-title p {
-    transition: color 0.3s ease;
+#book:hover .book-title #lesson-title {
+    color: var(--clay-deep);
 }
 
 /* 课程学习次数（打开本课并实际播放后累计） */
 .lesson-study-count {
     display: inline-flex;
     align-items: center;
-    margin-top: 6px;
-    padding: 3px 12px;
-    border-radius: 999px;
+    margin-top: 8px;
+    padding: 3px 11px;
+    border-radius: var(--r-pill);
     font-size: 12px;
     font-weight: 600;
-    color: var(--primary-color);
-    background-color: var(--primary-soft);
-    transition: background-color 0.3s ease;
+    color: var(--clay-deep);
+    background-color: var(--clay-wash);
+    transition: background-color 0.2s ease;
 }
 
 /* 注意：[hidden] 的 display:none 会被作者样式的 display 覆盖，必须显式补一条 */
@@ -68,15 +90,16 @@
 }
 
 .lesson-study-count.is-empty {
-    color: var(--text-faint);
-    background-color: rgba(31, 41, 55, 0.06);
+    color: var(--ink-5);
+    background-color: transparent;
+    padding-left: 0;
     font-weight: 500;
 }
 
 /* 课文切换按钮 */
 .book-title-header {
-    margin-top: 12px;
-    margin-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .book-title-header #book-title {
@@ -85,101 +108,91 @@
 
 .lesson-navigation {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     gap: 12px;
-    margin-top: 18px;
+    margin-top: 12px;
 }
 
 .lesson-nav-group {
     display: flex;
-    gap: 12px;
+    gap: 8px;
 }
 
 .nav-btn {
-    flex: 1;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    background-color: var(--container-bg);
-    color: var(--text-color-dark);
-    border: none;
-    border-radius: 999px;
-    padding: 9px 18px;
-    box-shadow: var(--shadow-flat-sm);
+    background-color: var(--surface);
+    color: var(--ink-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    padding: 7px 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     font-weight: 500;
     font-size: 13px;
     font-family: inherit;
 }
 
 .nav-btn svg {
-    width: 18px;
-    height: 18px;
-    transition: transform 0.3s ease;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
 }
 
 .nav-btn:hover:not(:disabled) {
-    color: var(--primary-color);
-    box-shadow: var(--shadow-flat);
-    transform: translateY(-2px);
-}
-
-.nav-btn:hover:not(:disabled) svg {
-    transform: scale(1.15);
+    color: var(--ink);
+    border-color: var(--ink-5);
+    background-color: var(--surface-2);
 }
 
 #prev-lesson:hover:not(:disabled) svg {
-    transform: translateX(-3px) scale(1.15);
+    transform: translateX(-2px);
 }
 
 #next-lesson:hover:not(:disabled) svg {
-    transform: translateX(3px) scale(1.15);
+    transform: translateX(2px);
 }
 
 .nav-btn:disabled {
-    opacity: 0.35;
+    opacity: 0.4;
     cursor: not-allowed;
-    box-shadow: none;
-    background-color: #e2e2e2;
 }
 
 .nav-btn:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: var(--shadow-pressed-sm);
+    background-color: var(--paper-deep);
 }
 
 /* ---------- 分享 ---------- */
 .lesson-sharing {
     position: fixed;
-    top: 24px;
-    right: 24px;
+    top: 16px;
+    right: 16px;
     display: flex;
     align-items: center;
     z-index: 1300;
 }
 
 .share-btn {
-    width: 46px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--container-bg);
-    color: var(--text-color-dark);
-    border: none;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-flat-sm);
+    background-color: var(--surface);
+    color: var(--ink-3);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .share-btn::after {
     content: '';
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background-color: currentColor;
     mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE4IDE2LjA4Yy0uNzYgMC0xLjQ0LjMtMS45Ni43N0w4LjkxIDEyLjdjLjA1LS4yMy4wOS0uNDYuMDktLjcgMC0uMjQtLjA0LS40Ny0uMDktLjdsNy4wMi00LjExYy41My41IDEuMjMuODEgMi4wMS44MSAxLjY2IDAgMy0xLjM0IDMtM1MxOS42NiAyIDE4IDJzLTMgMS4zNC0zIDNjMCAuMjQuMDQuNDcuMDkuN0w4LjA3IDkuODFDNy41MyA5LjMxIDYuODMgOSA2LjA1IDkgNC4zOSA5IDMuMDUgMTAuMzQgMy4wNSAxMnMxLjM0IDMgMyAzYy43OCAwIDEuNDgtLjMxIDIuMDEtLjgxbDcuMDcgNC4xNWMtLjA1LjIxLS4wOC40My0uMDguNjYgMCAxLjUyIDEuMjMgMi43NSAyLjc1IDIuNzVzMi43NS0xLjIzIDIuNzUtMi43NS0xLjIzLTIuNzUtMi43NS0yLjc1eiIvPjwvc3ZnPg==');
     -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE4IDE2LjA4Yy0uNzYgMC0xLjQ0LjMtMS45Ni43N0w4LjkxIDEyLjdjLjA1LS4yMy4wOS0uNDYuMDktLjcgMC0uMjQtLjA0LS40Ny0uMDktLjdsNy4wMi00LjExYy41My41IDEuMjMuODEgMi4wMS44MSAxLjY2IDAgMy0xLjM0IDMtM1MxOS42NiAyIDE4IDJzLTMgMS4zNC0zIDNjMCAuMjQuMDQuNDcuMDkuN0w4LjA3IDkuODFDNy41MyA5LjMxIDYuODMgOSA2LjA1IDkgNC4zOSA5IDMuMDUgMTAuMzQgMy4wNSAxMnMxLjM0IDMgMyAzYy43OCAwIDEuNDgtLjMxIDIuMDEtLjgxbDcuMDcgNC4xNWMtLjA1LjIxLS4wOC40My0uMDguNjYgMCAxLjUyIDEuMjMgMi43NSAyLjc1IDIuNzVzMi43NS0xLjIzIDIuNzUtMi43NS0xLjIzLTIuNzUtMi43NS0yLjc1eiIvPjwvc3ZnPg==');
@@ -191,9 +204,9 @@
 .share-btn:hover,
 .share-btn:focus-visible,
 .share-btn.is-open {
-    color: var(--primary-color);
-    box-shadow: var(--shadow-flat);
-    transform: translateY(-2px);
+    color: var(--clay-deep);
+    border-color: var(--ink-5);
+    background-color: var(--surface-2);
 }
 
 .share-btn:focus-visible {
@@ -203,13 +216,13 @@
 .share-menu {
     position: absolute;
     right: 0;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     width: 184px;
-    padding: 10px;
-    border-radius: var(--radius-md);
-    border: none;
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-flat), 0 14px 30px rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    border-radius: var(--r);
+    border: 1px solid var(--line);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-pop);
     opacity: 0;
     transform: translateY(-6px);
     pointer-events: none;
@@ -230,28 +243,27 @@
     gap: 10px;
     background: transparent;
     border: none;
-    color: var(--text-color-dark);
-    border-radius: 10px;
-    padding: 9px 10px;
+    color: var(--ink-2);
+    border-radius: var(--r-sm);
+    padding: 8px 10px;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    font-size: 14px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    font-size: 13.5px;
     font-family: inherit;
 }
 
 .share-menu-item:hover,
 .share-menu-item:focus-visible {
-    background: rgba(22, 163, 74, 0.08);
-    color: var(--primary-color);
+    background-color: var(--paper-deep);
+    color: var(--ink);
     outline: none;
 }
 
 .share-option-icon {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     flex-shrink: 0;
-    box-shadow: var(--shadow-flat-sm);
 }
 
 .share-option-icon--wechat {
@@ -277,13 +289,13 @@
 .wechat-share-popover {
     position: absolute;
     right: 0;
-    top: calc(100% + 12px);
+    top: calc(100% + 10px);
     width: 224px;
     padding: 16px 18px;
-    border-radius: var(--radius-md);
-    border: none;
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-flat), 0 16px 34px rgba(0, 0, 0, 0.12);
+    border-radius: var(--r);
+    border: 1px solid var(--line);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-pop);
     opacity: 0;
     transform: translateY(-8px);
     pointer-events: none;
@@ -302,7 +314,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
-    color: var(--text-color);
+    color: var(--ink);
     font-weight: 600;
     font-size: 0.9em;
 }
@@ -313,7 +325,7 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    color: var(--text-faint);
+    color: var(--ink-4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -334,7 +346,7 @@
 
 #wechat-share-close:hover,
 #wechat-share-close:focus-visible {
-    color: var(--text-color);
+    color: var(--ink);
     outline: none;
 }
 
@@ -343,28 +355,28 @@
     aspect-ratio: 1 / 1;
     display: block;
     margin: 0 auto 12px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--r-sm);
     background: #ffffff;
-    box-shadow: var(--shadow-pressed-sm);
+    border: 1px solid var(--line);
     object-fit: cover;
 }
 
 .wechat-share-popover p {
     margin: 0;
-    font-size: 13px;
-    color: var(--text-color-dark);
+    font-size: 12.5px;
+    color: var(--ink-3);
     text-align: center;
 }
 
 .share-feedback {
     position: absolute;
-    top: calc(100% + 12px);
+    top: calc(100% + 10px);
     right: 0;
-    padding: 10px 16px;
-    border-radius: var(--radius-sm);
-    background-color: var(--primary-soft);
-    box-shadow: var(--shadow-flat-sm);
-    color: var(--primary-color);
+    padding: 10px 14px;
+    border-radius: var(--r-sm);
+    background-color: var(--clay-wash);
+    border: 1px solid var(--clay-line);
+    color: var(--clay-deep);
     font-size: 13px;
     line-height: 1.4;
     min-width: 220px;
@@ -409,11 +421,10 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--container-bg);
-    border-top: none;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
-    padding: 20px;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.05);
+    padding: 14px 20px 12px;
     z-index: 1000;
 }
 
@@ -421,7 +432,7 @@
     content: "\0040\0068\006F\006F\0074\0068\0069\006E";
     position: absolute;
     right: 24px;
-    bottom: 8px;
+    bottom: 6px;
     font-size: 11px;
     color: rgba(0, 0, 0, 0.04);
     letter-spacing: 0.4px;
@@ -434,41 +445,47 @@
 }
 
 .custom-player-wrapper {
-    width: 90%;
-    max-width: 800px;
+    width: 100%;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
 .custom-player {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 14px;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .player-btn {
-    background-color: var(--text-color);
+    background-color: var(--ink-3);
     border: none;
     cursor: pointer;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     transition: transform 0.2s ease, background-color 0.2s ease;
-    opacity: 0.75;
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
 }
 
 .player-btn:hover {
-    transform: scale(1.1);
-    opacity: 1;
-    background-color: var(--primary-color);
+    transform: scale(1.08);
+    background-color: var(--clay-deep);
 }
 
 #play-pause-btn {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
+    background-color: var(--clay);
+}
+
+#play-pause-btn:hover {
+    background-color: var(--clay-deep);
 }
 
 .play {
@@ -485,14 +502,13 @@
     flex-grow: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 #progress-bar {
     flex-grow: 1;
-    height: 10px;
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-pressed-sm);
+    height: 4px;
+    background-color: var(--line);
     border-radius: 999px;
     cursor: pointer;
     position: relative;
@@ -501,16 +517,18 @@
 #progress {
     height: 100%;
     width: 0;
-    background: linear-gradient(90deg, #34d399, #16a34a);
+    background: var(--clay);
     border-radius: 999px;
     transition: width 0.1s linear;
 }
 
 #time-display {
-    color: var(--text-color-dark);
+    color: var(--ink-4);
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 500;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
 .volume-container {
@@ -532,10 +550,9 @@
 #volume-slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 100px;
-    height: 8px;
-    background: var(--container-bg);
-    box-shadow: var(--shadow-pressed-sm);
+    width: 90px;
+    height: 4px;
+    background: var(--line);
     border-radius: 999px;
     outline: none;
     cursor: pointer;
@@ -544,98 +561,107 @@
 #volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #f6f6f6;
-    box-shadow: 2px 2px 5px var(--shadow-dark), -1px -1px 3px var(--shadow-light);
+    width: 14px;
+    height: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line-2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
     border-radius: 50%;
     cursor: pointer;
 }
 
 #volume-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: #f6f6f6;
-    border: none;
-    box-shadow: 2px 2px 5px var(--shadow-dark), -1px -1px 3px var(--shadow-light);
+    width: 14px;
+    height: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line-2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
     border-radius: 50%;
     cursor: pointer;
 }
 
 /* ---------- 句子 ---------- */
 .sentence {
-    display: inline-block;
-    background-color: var(--container-bg);
-    color: var(--text-color-dark);
-    margin: 5px;
-    padding: 13px 17px;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-flat-sm);
+    display: block;
+    background-color: transparent;
+    color: var(--ink-2);
+    margin: 0;
+    padding: 11px 16px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.3s ease;
-    vertical-align: top;
-    border: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.sentence + .sentence {
+    margin-top: 2px;
 }
 
 .sentence:hover {
-    color: var(--text-color);
-    box-shadow: var(--shadow-flat);
-    transform: translateY(-2px);
+    background-color: var(--surface-2);
+    border-color: var(--line);
 }
 
 .sentence:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-pressed-sm);
+    background-color: var(--paper-deep);
 }
 
 .sentence.active {
-    background-color: var(--highlight-bg-color);
-    box-shadow: var(--shadow-pressed-sm);
+    background-color: var(--clay-wash);
+    border-color: var(--clay-line);
 }
 
 .sentence.active .en {
-    color: var(--primary-color);
+    color: var(--ink);
 }
 
 .sentence.active .cn {
-    color: rgba(22, 101, 52, 0.75);
+    color: var(--clay-deep);
 }
 
 /* 课文内听写输入框 */
 .dictation-input {
-    width: 90%;
-    padding: 9px 10px;
-    margin: 6px 0;
-    border: none;
-    border-radius: 10px;
-    font-size: 1em;
-    font-family: inherit;
-    background: var(--container-bg);
-    box-shadow: var(--shadow-pressed-sm);
-    color: var(--text-color);
+    width: 100%;
+    max-width: 560px;
+    padding: 9px 12px;
+    margin: 8px 0 4px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    font-size: 16px;
+    font-family: var(--font-serif);
+    background: var(--surface);
+    color: var(--ink);
     outline: none;
-    transition: box-shadow 0.2s ease, color 0.2s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.dictation-input:focus {
+    border-color: var(--clay);
+    box-shadow: 0 0 0 3px var(--clay-wash);
 }
 
 /* 听写实时校验：正确 */
 .dictation-input.is-correct {
-    color: var(--primary-color);
-    box-shadow: var(--shadow-pressed-sm), 0 0 0 2px rgba(22, 163, 74, 0.45);
+    color: var(--sage);
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px var(--sage-wash);
 }
 
 /* 听写实时校验：错误 */
 .dictation-input.is-wrong {
-    color: var(--danger-color);
-    box-shadow: var(--shadow-pressed-sm), 0 0 0 2px rgba(220, 90, 90, 0.4);
+    color: var(--rust);
+    border-color: var(--rust);
+    box-shadow: 0 0 0 3px var(--rust-wash);
 }
 
 .dictation-hint {
     display: none;
-    width: 90%;
-    margin: 0 0 6px;
-    font-size: 0.82em;
-    line-height: 1.35;
-    letter-spacing: 0.2px;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 0 4px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--ink-4);
 }
 
 .dictation-hint.is-visible {
@@ -643,11 +669,11 @@
 }
 
 .dictation-hint.is-correct {
-    color: var(--primary-color);
+    color: var(--sage);
 }
 
 .dictation-hint.is-wrong {
-    color: var(--danger-color);
+    color: var(--rust);
 }
 
 /* 听写模式：未点击时英文浅淡展示 */
@@ -656,12 +682,12 @@
 }
 
 .sentence.dictation-pending .en {
-    color: rgba(55, 65, 81, 0.32);
+    color: var(--ink-5);
     transition: color 0.2s ease;
 }
 
 .sentence.dictation-pending:hover .en {
-    color: rgba(55, 65, 81, 0.6);
+    color: var(--ink-4);
 }
 
 /* ---------- 模式开关（听写模式） ---------- */
@@ -675,14 +701,15 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 .dictation-container {
     display: flex;
     align-items: center;
+    margin-left: 6px;
 }
 
 .dictation-container input[type="checkbox"] {
@@ -691,44 +718,41 @@
 
 .dictation-container label {
     cursor: pointer;
-    width: 42px;
+    width: 38px;
     height: 22px;
-    background: var(--container-bg);
-    box-shadow: var(--shadow-pressed-sm);
+    background: var(--line-2);
     display: block;
-    border-radius: 100px;
+    border-radius: 999px;
     position: relative;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 .dictation-container label:after {
     content: '';
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
-    background: #f6f6f6;
-    box-shadow: 2px 2px 5px var(--shadow-dark), -1px -1px 3px var(--shadow-light);
-    border-radius: 90px;
-    transition: 0.2s;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: var(--surface);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    border-radius: 50%;
+    transition: transform 0.2s ease;
 }
 
 .dictation-container input:checked + label {
-    background: linear-gradient(145deg, #22c95f, #149447);
-    box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.2), inset -1px -1px 4px rgba(255, 255, 255, 0.25);
+    background: var(--clay);
 }
 
 .dictation-container input:checked + label:after {
-    left: calc(100% - 2px);
-    transform: translateX(-100%);
+    transform: translateX(16px);
     background: #ffffff;
 }
 
 .dictation-container span {
     margin-left: 8px;
-    font-size: 0.9em;
-    color: var(--text-color);
+    font-size: 12.5px;
+    color: var(--ink-3);
 }
 
 /* ---------- 课文文本 ---------- */
@@ -742,14 +766,18 @@
 }
 
 .en {
-    font-size: 18px;
-    font-weight: 500;
+    font-family: var(--font-serif);
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink);
 }
 
 .cn {
-    font-size: 14px;
-    margin-top: 5px;
-    color: var(--text-color-dark);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin-top: 3px;
+    color: var(--ink-3);
 }
 
 /* ---------- 播放模式 / 倍速 / 显示模式按钮 ---------- */
@@ -759,56 +787,64 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 10px 0 0;
+    gap: 8px;
+    margin: 8px 0 0;
 }
 
 #playback-modes button,
 #playback-speed button,
 #display-modes button {
-    background-color: var(--container-bg);
-    color: var(--text-color-dark);
-    border: none;
-    border-radius: 999px;
-    padding: 8px 16px;
-    box-shadow: var(--shadow-flat-sm);
+    background-color: transparent;
+    color: var(--ink-3);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-pill);
+    padding: 6px 13px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     font-weight: 500;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 12.5px;
 }
 
 #playback-modes button:hover,
 #playback-speed button:hover,
 #display-modes button:hover {
-    color: var(--primary-color);
-    box-shadow: var(--shadow-flat);
-    transform: translateY(-1px);
+    color: var(--ink);
+    border-color: var(--ink-5);
+    background-color: var(--surface-2);
 }
 
 #playback-modes button.active,
 #playback-speed button.active,
 #display-modes button.active {
-    background-color: var(--primary-soft);
-    color: var(--primary-color);
-    box-shadow: var(--shadow-pressed-sm);
+    background-color: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
     font-weight: 600;
 }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 768px) {
     #content {
-        padding-bottom: 220px;
+        padding-bottom: 240px;
+    }
+
+    #book .book-header {
+        gap: 12px;
+    }
+
+    #book .book-title #lesson-title {
+        font-size: 20px;
     }
 
     .player-container {
-        padding: 15px;
+        padding: 12px 14px 10px;
     }
 
     .custom-player {
         flex-wrap: wrap;
         justify-content: center;
+        gap: 12px;
     }
 
     .progress-container {
@@ -826,20 +862,23 @@
     }
 
     .sentence {
-        display: block;
-        margin: 9px 0;
+        padding: 10px 12px;
+    }
+
+    .en {
+        font-size: 18px;
     }
 
     #playback-modes,
     #playback-speed,
     #display-modes {
-        gap: 8px;
+        gap: 6px;
     }
 
     #playback-modes button,
     #playback-speed button,
     #display-modes button {
-        padding: 6px 13px;
+        padding: 5px 11px;
         font-size: 12px;
     }
 }
@@ -859,20 +898,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 58px;
+    width: 42px;
+    height: 54px;
     padding: 0;
-    border: none;
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-    background-color: var(--container-bg);
-    box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.08), -2px -2px 8px var(--shadow-light);
-    color: var(--text-color-dark);
+    border: 1px solid var(--line);
+    border-right: none;
+    border-radius: var(--r) 0 0 var(--r);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-pop);
+    color: var(--ink-3);
     cursor: pointer;
-    transition: color 0.25s ease, transform 0.25s ease;
+    transition: color 0.2s ease, transform 0.25s ease, opacity 0.25s ease;
 }
 
 .wordbook-toggle:hover {
-    color: var(--primary-color);
+    color: var(--clay-deep);
 }
 
 .wordbook-toggle svg {
@@ -894,13 +934,12 @@
     height: 20px;
     padding: 0 5px;
     border-radius: 10px;
-    background: linear-gradient(145deg, #22c95f, #149447);
+    background: var(--clay);
     color: #ffffff;
     font-size: 11px;
     font-weight: 700;
     line-height: 20px;
     text-align: center;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* ---------- 遮罩（仅移动端显示） ---------- */
@@ -908,7 +947,7 @@
     position: fixed;
     inset: 0;
     z-index: 1150;
-    background-color: rgba(130, 130, 130, 0.35);
+    background-color: rgba(20, 20, 19, 0.35);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
     opacity: 0;
@@ -930,9 +969,9 @@
     max-width: 92vw;
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-color);
-    border-left: none;
-    box-shadow: -10px 0 32px rgba(0, 0, 0, 0.12);
+    background-color: var(--paper);
+    border-left: 1px solid var(--line);
+    box-shadow: var(--shadow-pop);
     transform: translateX(100%);
     transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
@@ -948,39 +987,42 @@
     justify-content: space-between;
     gap: 12px;
     padding: 18px 18px 12px;
-    border-bottom: 1px solid var(--container-highlight);
+    border-bottom: 1px solid var(--line);
     flex-shrink: 0;
 }
 
 .wordbook-header__title h2 {
-    font-size: 1.05rem;
-    color: var(--heading-color);
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -.01em;
+    color: var(--ink);
     margin-bottom: 4px;
 }
 
 .wordbook-header__title p {
-    font-size: 0.75rem;
-    color: var(--text-color-dark);
+    font-size: 12px;
+    color: var(--ink-4);
     line-height: 1.4;
 }
 
 .wordbook-close {
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--r-sm);
     background-color: transparent;
-    color: var(--text-faint);
-    font-size: 22px;
+    color: var(--ink-4);
+    font-size: 20px;
     line-height: 1;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .wordbook-close:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--text-color);
+    background-color: var(--paper-deep);
+    color: var(--ink);
 }
 
 .wordbook-toolbar {
@@ -993,38 +1035,43 @@
 .wordbook-search {
     flex: 1;
     min-width: 0;
-    padding: 9px 13px;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--bg-color);
-    box-shadow: var(--shadow-pressed-sm);
-    color: var(--text-color);
-    font-size: 0.85rem;
+    padding: 8px 12px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    background-color: var(--surface);
+    color: var(--ink);
+    font-size: 13px;
     font-family: inherit;
     outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wordbook-search::placeholder {
+    color: var(--ink-4);
 }
 
 .wordbook-search:focus {
-    box-shadow: var(--shadow-pressed-sm), 0 0 0 2px rgba(22, 163, 74, 0.25);
+    border-color: var(--clay);
+    box-shadow: 0 0 0 3px var(--clay-wash);
 }
 
 .wordbook-clear {
     flex-shrink: 0;
-    padding: 9px 13px;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-flat-sm);
-    color: var(--text-color-dark);
-    font-size: 0.8rem;
+    padding: 8px 12px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    background-color: var(--surface);
+    color: var(--ink-3);
+    font-size: 12.5px;
     font-family: inherit;
     cursor: pointer;
-    transition: color 0.2s ease, box-shadow 0.2s ease;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .wordbook-clear:hover {
-    color: var(--danger-color);
-    box-shadow: var(--shadow-flat);
+    color: var(--rust);
+    border-color: var(--rust);
+    background-color: var(--rust-wash);
 }
 
 /* ---------- 列表 ---------- */
@@ -1038,17 +1085,16 @@
 .wordbook-card {
     position: relative;
     padding: 13px 36px 13px 14px;
-    margin-bottom: 12px;
-    border: none;
-    border-radius: var(--radius-sm);
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-flat-sm);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    margin-bottom: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background-color: var(--surface);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .wordbook-card:hover {
-    box-shadow: var(--shadow-flat);
-    transform: translateY(-1px);
+    border-color: var(--ink-5);
+    background-color: var(--surface-2);
 }
 
 .wordbook-card.is-mastered {
@@ -1063,15 +1109,17 @@
 }
 
 .wordbook-card__word {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary-color);
+    font-family: var(--font-serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--clay-deep);
     cursor: pointer;
     word-break: break-word;
 }
 
 .wordbook-card__word:hover {
     text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .wordbook-card__speak {
@@ -1079,41 +1127,40 @@
     width: 26px;
     height: 26px;
     padding: 0;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-flat-sm);
-    color: var(--text-color-dark);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    background-color: var(--surface);
+    color: var(--ink-3);
     font-size: 11px;
     font-family: inherit;
     cursor: pointer;
-    transition: color 0.2s ease, box-shadow 0.2s ease;
+    transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .wordbook-card__speak:hover {
-    color: var(--primary-color);
-    box-shadow: var(--shadow-flat);
+    color: var(--clay-deep);
+    border-color: var(--clay);
 }
 
 .wordbook-card__sentence {
-    font-size: 0.8rem;
+    font-size: 13px;
     line-height: 1.5;
-    color: var(--text-color);
+    color: var(--ink-2);
     margin-bottom: 4px;
     word-break: break-word;
 }
 
 .wordbook-card__translation {
-    font-size: 0.78rem;
+    font-size: 12.5px;
     line-height: 1.5;
-    color: var(--text-color-dark);
+    color: var(--ink-3);
     word-break: break-word;
 }
 
 .wordbook-card__meta {
     margin-top: 8px;
-    font-size: 0.68rem;
-    color: var(--text-faint);
+    font-size: 11px;
+    color: var(--ink-5);
 }
 
 .wordbook-card__remove {
@@ -1124,46 +1171,46 @@
     height: 24px;
     padding: 0;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--r-sm);
     background-color: transparent;
-    color: var(--text-faint);
+    color: var(--ink-5);
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .wordbook-card__remove:hover {
-    background-color: rgba(220, 90, 90, 0.12);
-    color: var(--danger-color);
+    background-color: var(--rust-wash);
+    color: var(--rust);
 }
 
 .wordbook-empty {
     padding: 32px 24px;
     text-align: center;
-    font-size: 0.82rem;
+    font-size: 13px;
     line-height: 1.7;
-    color: var(--text-color-dark);
+    color: var(--ink-4);
 }
 
 .wordbook-footer {
     flex-shrink: 0;
     padding: 12px 18px;
-    border-top: 1px solid var(--container-highlight);
+    border-top: 1px solid var(--line);
 }
 
 .wordbook-tts-toggle {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.78rem;
-    color: var(--text-color-dark);
+    font-size: 12.5px;
+    color: var(--ink-3);
     cursor: pointer;
     user-select: none;
 }
 
 .wordbook-tts-toggle input {
-    accent-color: var(--primary-color);
+    accent-color: var(--clay);
     cursor: pointer;
 }
 
@@ -1177,10 +1224,10 @@
     min-width: 180px;
     max-width: 260px;
     padding: 12px 14px;
-    border: none;
-    border-radius: var(--radius-sm);
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-flat), 0 12px 28px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-pop);
 }
 
 .word-popover.is-visible {
@@ -1188,9 +1235,10 @@
 }
 
 .word-popover__word {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--primary-color);
+    font-family: var(--font-serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--clay-deep);
     word-break: break-word;
 }
 
@@ -1202,40 +1250,45 @@
 .word-popover__btn {
     flex: 1;
     padding: 7px 10px;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--container-bg);
-    box-shadow: var(--shadow-flat-sm);
-    color: var(--text-color);
-    font-size: 0.75rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    background-color: var(--surface);
+    color: var(--ink-2);
+    font-size: 12.5px;
+    font-weight: 500;
     font-family: inherit;
     cursor: pointer;
-    transition: color 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .word-popover__btn:hover {
-    box-shadow: var(--shadow-flat);
+    border-color: var(--ink-5);
+    background-color: var(--surface-2);
+    color: var(--ink);
 }
 
 .word-popover__btn--primary {
-    color: var(--primary-color);
+    background-color: var(--clay);
+    border-color: var(--clay);
+    color: #ffffff;
     font-weight: 600;
 }
 
 .word-popover__btn--primary:hover {
-    background-color: var(--primary-soft);
+    background-color: var(--clay-deep);
+    border-color: var(--clay-deep);
+    color: #ffffff;
 }
 
 .word-popover__btn:disabled {
     opacity: 0.5;
     cursor: default;
-    box-shadow: none;
 }
 
 .word-popover__hint {
-    font-size: 0.7rem;
+    font-size: 11.5px;
     line-height: 1.4;
-    color: var(--text-color-dark);
+    color: var(--ink-4);
     min-height: 0;
 }
 
@@ -1246,7 +1299,7 @@
 /* 划词后给句子内被选中的词一个提示色 */
 #content .sentence .en::selection,
 #content .sentence .cn::selection {
-    background-color: rgba(22, 163, 74, 0.28);
+    background-color: rgba(217, 119, 87, 0.28);
 }
 
 /* ---------- 响应式 ---------- */
@@ -1255,15 +1308,16 @@
         width: 100%;
         max-width: 100vw;
         bottom: 0;
+        border-left: none;
     }
 
     .wordbook-toggle {
         top: auto;
         bottom: calc(var(--player-height) + 12px);
         transform: none;
-        width: 50px;
-        height: 50px;
-        border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        width: 46px;
+        height: 46px;
+        border-radius: var(--r) 0 0 var(--r);
     }
 
     .wordbook-toggle.is-open {

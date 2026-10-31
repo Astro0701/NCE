@@ -1,5 +1,6 @@
 /* ============================================================
-   课本导航页样式
+   课本导航页样式 · Paper + Ink + Clay
+   课表为带编号的细线列表，上次读到的课整行赤陶底色
    ============================================================ */
 
 .book-container {
@@ -14,8 +15,8 @@
 .book-container.active::after {
     content: "\0040\0068\006F\006F\0074\0068\0069\006E";
     position: absolute;
-    right: 18px;
-    bottom: 18px;
+    right: 4px;
+    bottom: 2px;
     font-size: 12px;
     color: rgba(0, 0, 0, 0.04);
     letter-spacing: 0.4px;
@@ -23,34 +24,43 @@
     user-select: none;
 }
 
+/* 册头部 */
+.book-header img {
+    max-width: 64px;
+}
+
+.book-header .book-title hr {
+    width: 40px;
+    margin: 6px auto;
+}
+
 /* 册切换按钮 */
 .book-header .nav-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
     padding: 0;
-    background-color: var(--container-bg);
-    color: var(--text-color-dark);
-    border: none;
+    background-color: var(--surface);
+    color: var(--ink-3);
+    border: 1px solid var(--line-2);
     border-radius: 50%;
-    box-shadow: var(--shadow-flat-sm);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
     flex-shrink: 0;
 }
 
 .book-header .nav-btn svg {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.3s ease;
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
 }
 
 .book-header .nav-btn:hover:not(:disabled) {
-    color: var(--primary-color);
-    box-shadow: var(--shadow-flat);
-    transform: scale(1.06);
+    color: var(--ink);
+    border-color: var(--ink-5);
+    background-color: var(--surface-2);
 }
 
 .book-header #prev-book:hover:not(:disabled) svg {
@@ -62,79 +72,84 @@
 }
 
 .book-header .nav-btn:active:not(:disabled) {
-    box-shadow: var(--shadow-pressed-sm);
-    transform: scale(1.0);
+    background-color: var(--paper-deep);
 }
 
 .book-header .nav-btn:disabled {
     opacity: 0.35;
     cursor: not-allowed;
-    box-shadow: none;
-    background-color: #e2e2e2;
 }
 
 /* 课文列表 */
 .lessons-grid {
-    margin: 15px 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 15px;
+    margin: 6px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .lesson-item {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding: 16px 20px;
-    background-color: var(--container-bg);
-    border-radius: var(--radius-sm);
+    align-items: center;
+    gap: 16px;
+    padding: 13px 10px;
+    background-color: transparent;
+    border-bottom: 1px solid var(--line);
     text-decoration: none;
-    color: var(--text-color-dark);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-flat-sm);
+    color: var(--ink-2);
     position: relative;
-    overflow: hidden;
+    transition: background-color 0.15s ease;
+}
+
+.lesson-item:last-child {
+    border-bottom: none;
 }
 
 .lesson-item:hover {
-    transform: translateY(-4px);
-    color: var(--text-color);
-    box-shadow: var(--shadow-flat);
+    background-color: var(--surface-2);
 }
 
 .lesson-item:hover .lesson-title {
-    color: var(--primary-color);
+    color: var(--clay-deep);
 }
 
 .lesson-item:active {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-pressed-sm);
+    background-color: var(--paper-deep);
 }
 
 .lesson-item.last-read {
-    background-color: var(--primary-soft);
-    box-shadow: inset -2px -2px 6px rgba(255, 255, 255, 0.7),
-                inset 2px 2px 6px rgba(22, 163, 74, 0.18);
+    background-color: var(--clay-wash);
+    border: 1px solid var(--clay-line);
+    border-radius: var(--r-sm);
+    margin: 4px 0;
 }
 
 .lesson-item.last-read .lesson-number {
-    color: var(--primary-color);
+    color: var(--clay-deep);
 }
 
 .lesson-number {
-    font-weight: 700;
-    color: var(--heading-color);
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    min-width: 76px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-4);
+    font-variant-numeric: tabular-nums;
 }
 
 .lesson-title {
     flex: 1;
     min-width: 0;
+    font-size: 14.5px;
     font-weight: 500;
-    transition: color 0.2s ease;
+    color: var(--ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.15s ease;
 }
 
-/* 学习次数徽标：绿色表示已学过，灰色表示未学 */
+/* 学习次数徽标：赤陶表示已学过，灰色表示未学 */
 .lesson-study-badge {
     flex-shrink: 0;
     align-self: center;
@@ -142,14 +157,14 @@
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--primary-color);
-    background-color: rgba(22, 163, 74, 0.13);
+    color: var(--clay-deep);
+    background-color: var(--clay-wash);
     white-space: nowrap;
 }
 
 .lesson-study-badge.is-empty {
-    color: var(--text-faint);
-    background-color: rgba(31, 41, 55, 0.06);
+    color: var(--ink-5);
+    background-color: transparent;
     font-weight: 500;
 }
 
@@ -159,21 +174,31 @@
     }
 
     .book-header .nav-btn {
-        width: 38px;
-        height: 38px;
+        width: 34px;
+        height: 34px;
     }
 
     .book-header .nav-btn svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 
     .book-header img {
-        max-width: 60px;
+        max-width: 52px;
     }
 
-    .lessons-grid {
-        grid-template-columns: 1fr;
+    .lesson-item {
         gap: 10px;
+        padding: 12px 6px;
+    }
+
+    .lesson-number {
+        min-width: 62px;
+        font-size: 12px;
+    }
+
+    .lesson-title {
+        white-space: normal;
+        line-height: 1.4;
     }
 }
